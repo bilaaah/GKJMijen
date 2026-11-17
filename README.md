@@ -405,17 +405,4 @@ Panduan selengkapnya tercantum pada [docs/coding-standards.md](file:///d:/GKJ_WE
 
 ---
 
-## 16. Project Team / Contributors
-
-| Peran | Nama Anggota | Kontak / Tautan |
-|---|---|---|
-| **Senior Software Architect** | *[Placeholder Nama Architect]* | *[placeholder-email@domain.com]* |
-| **Frontend Lead** | *[Placeholder Nama Frontend Lead]* | *[placeholder-email@domain.com]* |
-| **Frontend Developer** | *[Placeholder Nama Developer]* | *[placeholder-email@domain.com]* |
-| **Backend Lead** | *[Placeholder Nama Backend Lead]* | *[placeholder-email@domain.com]* |
-| **Backend Developer** | *[Placeholder Nama Developer]* | *[placeholder-email@domain.com]* |
-| **Product Owner / Gereja GKJ Mijen**| *[Placeholder Tim Perwakilan GKJ Mijen]* | *[sekretariat@gkjmijen.example.id]* |
-
----
-
 *SIM GKJ Mijen – Membangun Pelayanan Gerejawi yang Rapi, Transparan, dan Akuntabel.*
