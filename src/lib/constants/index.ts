@@ -1,7 +1,7 @@
 export * from './routes';
 
 export const APP_CONFIG = {
-  NAME: 'SIM GKJ Mijen',
+  NAME: 'GKJ Mijen',
   SHORT_NAME: 'GKJ Mijen',
   VERSION: '1.0.0',
   DEFAULT_PAGE_SIZE: 10,

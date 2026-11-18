@@ -1,27 +1,25 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Button } from '@/components/common';
+import { Alert } from '@/components/feedback';
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    // Logging error ke reporting service jika diperlukan
     console.error('App Error:', error);
   }, [error]);
 
   return (
-    <div className="container py-5 text-center">
-      <div className="alert alert-danger p-4">
-        <h4 className="alert-heading">Terjadi Kesalahan Sistem</h4>
-        <p className="text-muted">Maaf, terjadi kendala saat memproses permintaan Anda.</p>
-        <button className="btn btn-danger mt-2" onClick={() => reset()}>
-          Coba Lagi
-        </button>
+    <div className="boot">
+      <div style={{ maxWidth: 440 }} className="px-3">
+        <Alert tone="bad">
+          <b>Terjadi kesalahan.</b> Halaman tidak dapat ditampilkan. Coba muat ulang, dan jika masih gagal hubungi tim pengembang.
+        </Alert>
+        <div className="text-center mt-3">
+          <Button onClick={() => reset()} icon="arrow-repeat">
+            Coba Lagi
+          </Button>
+        </div>
       </div>
     </div>
   );

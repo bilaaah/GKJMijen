@@ -1,15 +1,14 @@
-import { SuratList } from '@/features/surat';
+import { Suspense } from 'react';
+import type { Metadata } from 'next';
+import { SuratList } from '@/features/surat/components';
+import { LoadingSpinner } from '@/components/feedback/LoadingSpinner';
+
+export const metadata: Metadata = { title: 'Permohonan Surat' };
 
 export default function SuratPage() {
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="fw-bold">Layanan Surat</h2>
-          <p className="text-muted mb-0">Modul permohonan dan penerbitan surat jemaat.</p>
-        </div>
-      </div>
-      <SuratList data={[]} />
-    </div>
+    <Suspense fallback={<LoadingSpinner />}>
+      <SuratList />
+    </Suspense>
   );
 }

@@ -1,17 +1,28 @@
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import Image from 'next/image';
+import { Logo } from '@/components/common/Logo';
+
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
-      <div className="w-100" style={{ maxWidth: '420px' }}>
-        <div className="text-center mb-4">
-          <h3 className="fw-bold text-primary">SIM GKJ Mijen</h3>
-          <p className="text-muted small">Sistem Informasi Manajemen Gereja</p>
+    <div className="auth">
+      <aside className="auth-art">
+        <Logo href="/login" />
+        <div className="auth-stage">
+          <div className="arch-wrap">
+            <div className="arch">
+              <Image src="/images/foto-gkj-mijen.jpeg" alt="Gedung GKJ Mijen Semarang dengan salib merah di fasad" fill sizes="270px" priority />
+            </div>
+          </div>
+          <div className="auth-copy">
+            <div className="eyebrow eb-light">Portal Pelayanan Jemaat</div>
+            <h2>Satu keluarga dalam kasih Kristus</h2>
+            <p>Kelola data jemaat, layanan surat, keuangan, jadwal, dan warta GKJ Mijen dalam satu tempat.</p>
+          </div>
         </div>
-        <div className="card shadow-sm border-0 p-4">{children}</div>
-      </div>
+      </aside>
+      <main className="auth-main">
+        <div className="auth-card">{children}</div>
+        <p className="auth-foot">© {new Date().getFullYear()} GKJ Mijen Semarang</p>
+      </main>
     </div>
   );
 }

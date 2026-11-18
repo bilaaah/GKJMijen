@@ -1,15 +1,14 @@
-import { JadwalWartaList } from '@/features/jadwal-warta';
+import { Suspense } from 'react';
+import type { Metadata } from 'next';
+import { KegiatanList } from '@/features/jadwal-warta/components';
+import { LoadingSpinner } from '@/components/feedback/LoadingSpinner';
 
-export default function JadwalWartaPage() {
+export const metadata: Metadata = { title: 'Kegiatan' };
+
+export default function KegiatanPage() {
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="fw-bold">Jadwal dan Warta</h2>
-          <p className="text-muted mb-0">Modul jadwal ibadah, kegiatan gereja, dan publikasi warta jemaat.</p>
-        </div>
-      </div>
-      <JadwalWartaList jadwalList={[]} wartaList={[]} />
-    </div>
+    <Suspense fallback={<LoadingSpinner />}>
+      <KegiatanList />
+    </Suspense>
   );
 }

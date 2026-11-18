@@ -33,6 +33,60 @@ export function formatDateTime(dateString: string | Date): string {
   });
 }
 
+export const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+export const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+/** Ubah 'YYYY-MM-DD' menjadi Date lokal (tanpa geser zona waktu). */
+export function parseTanggal(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+/** Tanggal hari ini dalam format 'YYYY-MM-DD'. */
+export function hariIniISO(date: Date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+/** Contoh: 18 Nov 2026 */
+export function formatTanggalPendek(iso: string): string {
+  if (!iso) return '–';
+  const d = parseTanggal(iso);
+  return `${d.getDate()} ${NAMA_BULAN[d.getMonth()].slice(0, 3)} ${d.getFullYear()}`;
+}
+
+/** Contoh: Rabu, 18 November 2026 */
+export function formatHariTanggal(iso: string): string {
+  if (!iso) return '–';
+  const d = parseTanggal(iso);
+  return `${NAMA_HARI[d.getDay()]}, ${d.getDate()} ${NAMA_BULAN[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/** Contoh: 06:30 -> 06.30 */
+export function formatJam(jam: string): string {
+  return jam ? jam.replace(':', '.') : '–';
+}
+
+/** Contoh: Rp 1.250.000 */
+export function formatRp(amount: number): string {
+  return 'Rp ' + Math.round(amount).toLocaleString('id-ID');
+}
+
+/** Inisial dua huruf untuk avatar, mengabaikan gelar Pdt./Pnt. */
+export function inisial(nama: string): string {
+  return nama
+    .replace(/^(Pdt|Pnt)\.\s*/, '')
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('')
+    .toUpperCase();
+}
+
+/** Ambil nama berkas dari path/URL. */
+export function namaBerkas(path: string): string {
+  return path ? path.split('/').pop() ?? path : '';
+}
+
 export function formatPhoneNumber(phone: string): string {
   if (!phone) return '-';
   const cleaned = phone.replace(/\D/g, '');

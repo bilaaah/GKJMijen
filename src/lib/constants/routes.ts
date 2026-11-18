@@ -1,17 +1,34 @@
 /**
- * Definisi Route URL aplikasi SIM GKJ Mijen (4 Modul Utama)
+ * Definisi Route URL aplikasi GKJ Mijen (4 Modul Utama + Pengaturan)
  */
 export const ROUTES = {
   HOME: '/',
   AUTH: {
     LOGIN: '/login',
+    REGISTER: '/register',
     FORGOT_PASSWORD: '/forgot-password',
+    RESET_PASSWORD: '/reset-password',
   },
   DASHBOARD: {
-    ROOT: '/',
+    ROOT: '/dashboard',
     JEMAAT: '/jemaat',
+    JEMAAT_TAMBAH: '/jemaat/tambah',
     SURAT: '/surat',
     KEUANGAN: '/keuangan',
+    KEUANGAN_TAMBAH: '/keuangan/tambah',
+    KEUANGAN_LAPORAN: '/keuangan/laporan',
     JADWAL_WARTA: '/jadwal-warta',
+    KEGIATAN_TAMBAH: '/jadwal-warta/kegiatan/tambah',
+    WARTA: '/jadwal-warta/warta',
+    WARTA_TULIS: '/jadwal-warta/warta/tulis',
+    AKUN: '/akun',
+    PROFIL: '/profil',
   },
 } as const;
+
+export const routeJemaatDetail = (id: string) => `/jemaat/${id}`;
+export const routeJemaatUbah = (id: string) => `/jemaat/${id}/ubah`;
+export const routeSuratProses = (id: string) => `/surat/${id}`;
+export const routeTransaksiUbah = (id: string) => `/keuangan/${id}`;
+export const routeKegiatanUbah = (id: string) => `/jadwal-warta/kegiatan/${id}`;
+export const routeWartaUbah = (id: string) => `/jadwal-warta/warta/${id}`;

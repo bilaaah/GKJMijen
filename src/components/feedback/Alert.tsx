@@ -1,27 +1,28 @@
 import React from 'react';
+import { Icon } from '../common/Icon';
+
+export type AlertTone = 'info' | 'rose' | 'bad' | 'warn' | 'ok';
+
+const DEFAULT_ICON: Record<AlertTone, string> = {
+  info: 'info-circle',
+  rose: 'info-circle',
+  bad: 'exclamation-circle',
+  warn: 'exclamation-triangle',
+  ok: 'check-circle',
+};
 
 export interface AlertProps {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
-  title?: string;
+  tone?: AlertTone;
+  icon?: string;
   children: React.ReactNode;
-  dismissible?: boolean;
-  onDismiss?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
-export const Alert: React.FC<AlertProps> = ({
-  variant = 'info',
-  title,
-  children,
-  dismissible = false,
-  onDismiss,
-}) => {
-  return (
-    <div className={`alert alert-${variant} ${dismissible ? 'alert-dismissible fade show' : ''}`} role="alert">
-      {title && <h6 className="alert-heading">{title}</h6>}
-      <div>{children}</div>
-      {dismissible && (
-        <button type="button" className="btn-close" aria-label="Close" onClick={onDismiss} />
-      )}
-    </div>
-  );
-};
+/** Kotak keterangan/peringatan berwarna lembut. */
+export const Alert: React.FC<AlertProps> = ({ tone = 'info', icon, children, className = '', style }) => (
+  <div className={`note ${tone === 'info' ? '' : tone} ${className}`.trim()} style={style} role={tone === 'bad' ? 'alert' : undefined}>
+    <Icon name={icon ?? DEFAULT_ICON[tone]} />
+    <div>{children}</div>
+  </div>
+);

@@ -1,21 +1,25 @@
 import React from 'react';
+import { Icon } from '../common/Icon';
 
 export interface EmptyStateProps {
   title?: string;
   description?: string;
+  icon?: string;
   action?: React.ReactNode;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
   title = 'Tidak ada data',
   description = 'Belum ada data yang tersedia untuk ditampilkan saat ini.',
+  icon = 'search',
   action,
-}) => {
-  return (
-    <div className="text-center py-5 px-3 bg-light rounded-3 border">
-      <h5 className="text-secondary mb-2">{title}</h5>
-      <p className="text-muted mb-3">{description}</p>
-      {action && <div>{action}</div>}
+}) => (
+  <div className="empty">
+    <div className="ic-circle">
+      <Icon name={icon} />
     </div>
-  );
-};
+    <h4>{title}</h4>
+    <p>{description}</p>
+    {action && <div style={{ marginTop: 14 }}>{action}</div>}
+  </div>
+);
