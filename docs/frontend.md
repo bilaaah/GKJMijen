@@ -12,7 +12,7 @@ npm run dev
 
 Buka http://localhost:3000. Halaman login memakai akun demo `yohanes.prasetyo@gkjmijen.or.id` dengan kata sandi apa saja minimal 8 karakter (tombol **Isi otomatis** tersedia).
 
-> Jika folder proyek berada di jalur yang mengandung karakter `&` (misalnya `Sistem Informasi & Manajemen`), `npm run dev` gagal di Windows. Jalankan `node node_modules/next/dist/bin/next dev` atau pindahkan folder ke jalur tanpa `&`.
+> Script di `package.json` memanggil Next.js lewat `node node_modules/...`, bukan lewat pintasan `next`. Dengan begitu `npm run dev` tetap jalan di Windows walaupun folder proyek berada di jalur yang mengandung karakter `&` (misalnya `Sistem Informasi & Manajemen`).
 
 ## Cara kerja mode frontend
 
