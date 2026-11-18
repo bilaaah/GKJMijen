@@ -27,8 +27,6 @@ interface MockContextValue {
   logout: () => void;
   register: (input: { nama: string; email: string }) => RegisterResult;
   updateUser: (patch: Partial<Profile>) => void;
-  jemaatQuery: string;
-  setJemaatQuery: (q: string) => void;
   resetData: () => void;
 }
 
@@ -42,7 +40,6 @@ export function MockProvider({ children }: { children: React.ReactNode }) {
   const [db, setDbState] = useState<MockDB>(SEED);
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const [jemaatQuery, setJemaatQuery] = useState('');
 
   useEffect(() => {
     try {
@@ -111,8 +108,8 @@ export function MockProvider({ children }: { children: React.ReactNode }) {
   const resetData = useCallback(() => setDbState(SEED), []);
 
   const value = useMemo<MockContextValue>(
-    () => ({ db, ready, user, setDb, login, logout, register, updateUser, jemaatQuery, setJemaatQuery, resetData }),
-    [db, ready, user, setDb, login, logout, register, updateUser, jemaatQuery, resetData]
+    () => ({ db, ready, user, setDb, login, logout, register, updateUser, resetData }),
+    [db, ready, user, setDb, login, logout, register, updateUser, resetData]
   );
 
   return <MockContext.Provider value={value}>{children}</MockContext.Provider>;

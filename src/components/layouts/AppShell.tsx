@@ -15,7 +15,7 @@ import { ROUTES } from '@/lib/constants/routes';
  * Mode frontend: jika belum login (data contoh), pengguna diarahkan ke /login.
  */
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { ready, user, db, logout, setJemaatQuery } = useMock();
+  const { ready, user, db, logout } = useMock();
   const router = useRouter();
   const path = usePathname();
   const toast = useToast();
@@ -64,10 +64,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
           userName={user.nama}
           userRole={ROLE_LABELS[user.peran]}
           onToggleSidebar={() => (window.innerWidth < 992 ? setMobileOpen((o) => !o) : setCollapsed((c) => !c))}
-          onSearch={(q) => {
-            setJemaatQuery(q);
-            router.push(ROUTES.DASHBOARD.JEMAAT);
-          }}
           onLogout={handleLogout}
           onOpenLanding={() => toast('Landing page publik belum dibuat di tahap ini.', 'info')}
         />

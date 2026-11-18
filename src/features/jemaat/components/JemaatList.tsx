@@ -13,10 +13,11 @@ import { ROUTES, routeJemaatDetail, routeJemaatUbah } from '@/lib/constants/rout
  * Mode frontend: data dari useMock(); hapus data langsung di memori.
  */
 export const JemaatList: React.FC = () => {
-  const { db, setDb, jemaatQuery, setJemaatQuery } = useMock();
+  const { db, setDb } = useMock();
   const router = useRouter();
   const toast = useToast();
   const confirm = useConfirm();
+  const [jemaatQuery, setJemaatQuery] = useState('');
   const [wilayah, setWilayah] = useState('');
   const [baptis, setBaptis] = useState('');
   const [sidi, setSidi] = useState('');

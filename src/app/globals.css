@@ -288,8 +288,7 @@ textarea.input { resize: vertical; min-height: 96px; }
 .crumb { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--muted); min-width: 0; white-space: nowrap; overflow: hidden; }
 .crumb b { color: var(--espresso); font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
 .crumb .bi { font-size: 11px; opacity: 0.6; }
-.tb-search { margin-left: auto; width: min(320px, 30vw); }
-.tb-user { position: relative; }
+.tb-user { position: relative; margin-left: auto; }
 .tb-user-btn { display: flex; align-items: center; gap: 10px; border: 0; background: none; cursor: pointer; padding: 4px 6px 4px 4px; border-radius: 999px; }
 .tb-user-btn:hover { background: var(--sand); }
 .tb-user-tx { text-align: left; line-height: 1.2; }
@@ -478,7 +477,6 @@ a.stat:hover { border-color: var(--terra); color: inherit; }
 @media (max-width: 900px) { .fin, .stats.three { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 860px) { .tb-user-tx { display: none; } }
 @media (max-width: 700px) {
-  .tb-search { display: none; }
   .crumb { flex: 1; }
   .form-grid, .grid-profil, .st-grid { grid-template-columns: minmax(0, 1fr); }
   .band { grid-template-columns: minmax(0, 1fr); }

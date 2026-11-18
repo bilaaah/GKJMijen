@@ -42,16 +42,14 @@ export interface HeaderProps {
   userName: string;
   userRole?: string;
   onToggleSidebar: () => void;
-  onSearch: (q: string) => void;
   onLogout: () => void;
   onOpenLanding: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ userName, userRole = 'Pengurus Gereja', onToggleSidebar, onSearch, onLogout, onOpenLanding }) => {
+export const Header: React.FC<HeaderProps> = ({ userName, userRole = 'Pengurus Gereja', onToggleSidebar, onLogout, onOpenLanding }) => {
   const path = usePathname() ?? '';
   const crumbs = crumbsFor(path);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [q, setQ] = useState('');
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,19 +74,6 @@ export const Header: React.FC<HeaderProps> = ({ userName, userRole = 'Pengurus G
           </React.Fragment>
         ))}
       </nav>
-      <form
-        className="tb-search"
-        role="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSearch(q.trim());
-        }}
-      >
-        <label className="search">
-          <Icon name="search" />
-          <input className="input" id="gsearch" type="search" placeholder="Cari nama jemaat…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Cari nama jemaat" />
-        </label>
-      </form>
       <div className="tb-user" ref={ref}>
         <button type="button" className="tb-user-btn" onClick={() => setMenuOpen((o) => !o)} aria-haspopup="menu" aria-expanded={menuOpen}>
           <span className="avatar">{inisial(userName)}</span>
