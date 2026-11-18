@@ -1,6 +1,6 @@
 # Prompt UI Admin — GKJ Mijen
 
-> Salin seluruh isi di bawah garis ke tool prototyping (Figma Make, v0, Lovable, Claude, dsb.).
+> Salin seluruh isi di bawah garis ke tool prototyping (Figma Make, v0, Lovable, dsb.).
 > - **Color palette & gaya visual** diambil dari file `Referensi Color Palette Website.jpeg` (landing page GKJ Mijen: maroon, cokelat tua, krem). Kode HEX diukur langsung dari gambar tersebut.
 > - **Struktur data** diambil dari ERD di laporan *Tahap Perancangan Proses Usulan, Basis Data, dan Laporan*.
 > - Kalau tool-nya bisa menerima gambar, **lampirkan juga file referensi .jpeg** bersama prompt ini agar hasilnya lebih mirip.
