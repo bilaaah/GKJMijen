@@ -1,1 +1,1 @@
-export * from './TransaksiTable';
+export * from './KeuanganList';
