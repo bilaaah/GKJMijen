@@ -1,408 +1,210 @@
-# Sistem Informasi Manajemen Gereja Kristen Jawa Mijen (SIM GKJ Mijen)
+# SIM GKJ Mijen (Sistem Informasi Manajemen GKJ Mijen)
 
-[![Next.js](https://img.shields.io/badge/Framework-Next.js%2015-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/Language-TypeScript%205-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E?style=flat&logo=supabase)](https://supabase.com/)
-[![Bootstrap](https://img.shields.io/badge/UI-Bootstrap%205-7952B3?style=flat&logo=bootstrap)](https://getbootstrap.com/)
+Aplikasi berbasis web untuk mengintegrasikan pengelolaan administrasi, sensus jemaat, pelayanan surat, keuangan, dan publikasi warta di lingkungan Gereja Kristen Jawa (GKJ) Mijen.
 
 ---
 
-## 1. Project Title
-**Sistem Informasi Manajemen Gereja Kristen Jawa (SIM GKJ Mijen)**
+## 1. Deskripsi Proyek
+**SIM GKJ Mijen** adalah sistem informasi manajemen gereja yang dirancang untuk mempermudah operasional pelayanan gerejawi secara digital, terintegrasi, dan transparan. Sistem ini memfasilitasi kebutuhan administrasi warga jemaat maupun pengurus gereja dalam satu platform web yang responsif.
 
 ---
 
-## 2. Project Description
-**SIM GKJ Mijen** merupakan sistem informasi berbasis web terpadu yang dirancang khusus untuk memodernisasi, mengotomatisasi, dan mengintegrasikan seluruh operasional administrasi, pelayanan pastoral jemaat, keuangan, persuratan, jadwal kegiatan, serta publikasi warta di lingkungan Gereja Kristen Jawa (GKJ) Mijen.
-
-Aplikasi ini dibangun menggunakan arsitektur monolit modular modern dengan kerangka kerja **Next.js (App Router)** dan **TypeScript**, serta didukung oleh platform **Supabase** untuk basis data relasional PostgreSQL berstandar enterprise, autentikasi terpusat (Supabase Auth), dan media penyimpanan berkas digital (Supabase Storage). Antarmuka pengguna dirancang responsif dan konsisten menggunakan kerangka kerja **Bootstrap 5**.
-
----
-
-## 3. Project Objectives
-1. **Sentralisasi Data Jemaat**: Mengintegrasikan basis data sensus warga jemaat, riwayat keluarga, blok wilayah, serta arsip sakramen (baptis, sidi, dan pernikahan) secara akurat dan real-time.
-2. **Efisiensi Layanan Surat & Dokumen**: Mempercepat proses permohonan surat gerejawi oleh warga jemaat dan pengarsipan surat resmi secara digital.
-3. **Transparansi & Akuntabilitas Keuangan**: Menyediakan pencatatan pembukuan kas operasional dan rekonsiliasi penghitungan persembahan ibadah yang rapi, transparan, dan terverifikasi.
-4. **Koordinasi Pelayanan yang Terstruktur**: Memfasilitasi penjadwalan agenda komisi kerja dan penugasan petugas ibadah (pelayan firman, liturgos, pemusik) dengan sistem konfirmasi terpadu.
-5. **Kemudahan Akses Informasi**: Menyediakan kanal distribusi warta jemaat mingguan dan pengumuman gerejawi yang dapat diakses dengan mudah oleh seluruh warga jemaat.
-6. **Keamanan & Kontrol Akses Berbasis Peran**: Melindungi kerahasiaan data jemaat dan keuangan melalui penerapan Role-Based Access Control (RBAC) serta Row Level Security (RLS) pada level basis data.
+## 2. Tujuan Aplikasi
+1. Menyediakan basis data warga jemaat yang akurat, terpusat, dan mudah diperbarui.
+2. Mempermudah warga jemaat dalam mengajukan permohonan surat gerejawi secara online.
+3. Menciptakan transparansi dan akuntabilitas dalam pencatatan keuangan dan persembahan ibadah.
+4. Mempermudah publikasi jadwal kegiatan ibadah dan distribusi warta jemaat mingguan.
+5. Mendukung efisiensi koordinasi pelayanan antara Majelis/Pengurus Gereja dan Warga Jemaat.
 
 ---
 
-## 4. Technology Stack
-
-| Komponen | Teknologi | Keterangan |
-|---|---|---|
-| **Framework Utama** | Next.js (App Router) | Full-stack React Framework untuk Server-Side Rendering (SSR) & Server Actions |
-| **Bahasa Pemrograman** | TypeScript | Type safety statis pada seluruh layer frontend dan backend |
-| **Database Engine** | Supabase PostgreSQL | Basis data relasional dengan dukungan Row Level Security (RLS) |
-| **Authentication** | Supabase Auth | Manajemen session, otentikasi JWT, dan login terproteksi cookie HTTP-only |
-| **File Storage** | Supabase Storage | Penyimpanan dokumen surat, bukti transaksi, dan berkas PDF warta |
-| **UI Framework** | Bootstrap 5 | Komponen tata letak, grid responsif, dan styling antarmuka sistem |
-| **Validasi Skema** | Zod | Deklarasi skema validasi tipe data di sisi klien dan server |
-| **Version Control** | Git & GitHub | Manajemen kode sumber dan kolaborasi tim pengembang |
+## 3. Teknologi yang Digunakan
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Bahasa**: [TypeScript](https://www.typescriptlang.org/)
+- **Database & Backend Services**: [Supabase](https://supabase.com/) (PostgreSQL, Auth, Storage)
+- **UI Framework**: [Bootstrap 5](https://getbootstrap.com/)
+- **Version Control**: Git & GitHub
 
 ---
 
-## 5. System Modules
+## 4. Modul Sistem & Hak Akses
 
-Sistem dibagi menjadi 6 (enam) kelompok modul utama yang saling terhubung:
+### Empat Modul Utama:
+1. **Data Jemaat (`features/jemaat`)**: Pencatatan biodata warga jemaat, status keanggotaan, dan data keluarga.
+2. **Layanan Surat (`features/surat`)**: Pengajuan permohonan surat (baptis, sidi, atestasi, dll.) dan pemantauan status proses surat.
+3. **Keuangan (`features/keuangan`)**: Pencatatan kas pemasukan, pengeluaran operasional, dan penghitungan persembahan ibadah.
+4. **Jadwal dan Warta (`features/jadwal-warta`)**: Jadwal kegiatan ibadah/rapat gereja dan arsip buletin warta jemaat (PDF).
 
-### A. Data Jemaat (`src/features/jemaat/`)
-- **Data Jemaat**: Manajemen profil lengkap anggota, nomor induk warga, kontak, dan status keanggotaan.
-- **Data Keluarga**: Pengelolaan nomor Kartu Keluarga (KK) gereja, kepala keluarga, dan susunan anggota keluarga.
-- **Data Wilayah**: Pemetaan jemaat berdasarkan blok/lingkungan wilayah pelayanan pastoral.
-- **Riwayat Sakramen**: Pencatatan sakramen Baptis Anak, Baptis Dewasa, Peneguhan Sidi, dan Pernikahan Kudus.
-
-### B. Layanan Surat dan Arsip (`src/features/surat-arsip/`)
-- **Permohonan Surat**: Pengajuan surat pengantar, surat baptis/sidi, atau atestasi pindah secara online oleh jemaat.
-- **Jenis Surat**: Master format dan template surat resmi gereja.
-- **Pembuatan Surat**: Alur kerja verifikasi, persetujuan tata usaha/majelis, hingga penerbitan dokumen resmi.
-- **Arsip Dokumen**: Repositori arsip surat keluar, surat masuk, dan dokumen hukum/sertifikat gereja.
-
-### C. Keuangan (`src/features/keuangan/`)
-- **Kategori Keuangan**: Master pos mata anggaran untuk penerimaan dan pengeluaran kas.
-- **Penghitungan Persembahan**: Pencatatan fisik kantong merah, kantong hitam, dan persembahan khusus setiap kebaktian.
-- **Transaksi Keuangan**: Pencatatan kas operasional berkala yang dilengkapi bukti transfer/kuitansi digital.
-- **Laporan Keuangan**: Pembuatan rekapitulasi buku kas, laporan realisasi anggaran, dan neraca berkala.
-
-### D. Jadwal dan Kegiatan (`src/features/jadwal-kegiatan/`)
-- **Data Komisi**: Master komisi pelayanan gerejawi (Komisi Anak, Pemuda, Dewasa, Diakonia, dll.).
-- **Anggota Komisi**: Struktur kepengurusan komisi dan periode masa jabatan.
-- **Jadwal Kegiatan**: Kalender kegiatan ibadah minggu, persekutuan wilayah, rapat majelis, dan latihan musik.
-- **Penugasan Petugas**: Penjadwalan petugas ibadah (pendeta/pengkhotbah, liturgos, lektor, organis, kantoria).
-
-### E. Warta dan Pengumuman (`src/features/warta-pengumuman/`)
-- **Warta Jemaat**: Penyusunan edisi warta jemaat mingguan, tema mingguan, dan leksionari Alkitab.
-- **Pengumuman**: Siaran warta penting seputar kedukaan, pernikahan, atau imbauan majelis.
-- **Publikasi Warta**: Manajemen status penerbitan (draft, publish, archive).
-- **Arsip PDF Warta**: Repositori file PDF warta jemaat yang dapat diunduh langsung oleh warga.
-
-### F. Pengguna dan Hak Akses (`src/features/pengguna-akses/`)
-- **Roles (RBAC)**: Penetapan hak akses pengguna (`super_admin`, `pendeta`, `majelis`, `tata_usaha`, `bendahara`, `warga`).
-- **Profiles**: Sinkronisasi data pengguna akun dengan data entitas jemaat fisik.
-- **Log Aktivitas**: Audit trail rekam jejak setiap aksi mutasi data penting pada sistem.
-- **Manajemen Hak Akses**: Pengaturan otorisasi menu navigasi dan proteksi Server Actions.
+### Dua Peran Pengguna (Roles):
+- **Warga Jemaat**: Mengakses informasi jadwal & warta, melihat profil jemaat pribadi, dan mengajukan permohonan surat.
+- **Pengurus Gereja**: Mengelola master data jemaat, memproses dan menyetujui permohonan surat, mencatat transaksi keuangan, serta mempublikasikan jadwal dan warta.
 
 ---
 
-## 6. Project Folder Structure
-
-Struktur direktori proyek dirancang dengan pendekatan modular berbasis domain fitur:
+## 5. Struktur Folder Proyek
 
 ```text
 sim-gkj-mijen/
-├── .env.example                       # Contoh konfigurasi environment variables
-├── .gitignore                          # Daftar file dan direktori yang diabaikan oleh Git
-├── next.config.mjs                    # Konfigurasi Next.js
-├── package.json                       # Manifes dependensi dan script proyek
-├── tsconfig.json                      # Konfigurasi TypeScript dan path alias (@/*)
-├── README.md                          # Dokumentasi utama proyek
+├── .env.example              # Template variabel lingkungan Supabase
+├── .gitignore                 # File yang diabaikan Git
+├── next.config.mjs           # Konfigurasi Next.js
+├── package.json              # Dependensi dan skrip proyek
+├── tsconfig.json             # Konfigurasi TypeScript dan path alias (@/*)
+├── README.md                 # Dokumentasi utama proyek
 │
-├── docs/                              # Dokumentasi teknis komprehensif
-│   ├── api-and-actions-guide.md       # Panduan Server Actions dan API Route
-│   ├── architecture.md                # Desain dan diagram arsitektur sistem
-│   ├── coding-standards.md            # Standar konvensi kode dan penamaan
-│   ├── database-design.md             # Desain ERD dan kamus basis data PostgreSQL
-│   ├── modules-breakdown.md           # Rincian 6 modul fungsional sistem
-│   └── team-responsibilities.md       # Pembagian peran kerja Tim Frontend vs Backend
+├── docs/                     # Dokumentasi teknis proyek
+│   └── architecture.md       # Penjelasan arsitektur dan alur data
 │
-├── public/                            # Berkas statis publik
-│   ├── docs/                          # Dokumen publik statis
-│   ├── images/                        # Aset grafis, logo gereja, dan placeholder
-│   └── favicon.ico
+├── public/                   # Aset gambar dan berkas statis
+│   ├── docs/
+│   └── images/
 │
-├── supabase/                          # Konfigurasi basis data & migrasi Supabase
-│   ├── config.toml                    # Konfigurasi lokal Supabase CLI
-│   ├── migrations/                    # Skrip migrasi DDL database PostgreSQL
-│   │   ├── 20261117000001_initial_schema.sql
-│   │   └── 20261117000002_row_level_security.sql
-│   └── seeds/                         # Data awal / master seed
-│       └── seed.sql
+├── supabase/                 # Kebutuhan skrip basis data Supabase
+│   ├── schema.sql            # Skrip DDL tabel dan RLS 4 modul utama
+│   └── seed.sql              # Data awal/sampel pengujian
 │
-└── src/                               # Kode sumber aplikasi (Source Code)
-    ├── middleware.ts                  # Middleware Next.js untuk refresh session Supabase
+└── src/                      # Kode sumber aplikasi
+    ├── middleware.ts         # Middleware otentikasi sesi Supabase
     │
-    ├── app/                           # Routing Next.js (App Router)
-    │   ├── layout.tsx                 # Root layout aplikasi (Bootstrap 5 & metadata)
-    │   ├── page.tsx                   # Landing page / halaman depan
-    │   ├── loading.tsx                # Global loading state
-    │   ├── error.tsx                  # Global error boundary
-    │   ├── not-found.tsx              # Halaman 404
-    │   │
-    │   ├── (auth)/                    # Route Group: Autentikasi Pengguna
-    │   │   ├── layout.tsx
-    │   │   ├── login/page.tsx
-    │   │   └── forgot-password/page.tsx
-    │   │
-    │   ├── (dashboard)/               # Route Group: Area Terproteksi Pengguna / Admin
-    │   │   ├── layout.tsx             # Dashboard layout (Header, Sidebar, Content, Footer)
-    │   │   ├── page.tsx               # Halaman utama ringkasan dashboard
-    │   │   ├── jemaat/                # Rute Modul Data Jemaat (keluarga, wilayah, sakramen)
-    │   │   ├── surat-arsip/           # Rute Modul Layanan Surat & Pengarsipan
-    │   │   ├── keuangan/              # Rute Modul Transaksi & Laporan Keuangan
-    │   │   ├── jadwal-kegiatan/       # Rute Modul Komisi & Jadwal Kebaktian
-    │   │   ├── warta-pengumuman/      # Rute Modul Warta Mingguan & Informasi
-    │   │   └── pengguna-akses/        # Rute Modul Akun Pengguna, Roles & Audit Trail
-    │   │
-    │   └── api/                       # Route Handlers untuk integrasi API / Webhook
-    │       └── webhooks/route.ts
+    ├── app/                  # Halaman dan routing Next.js (App Router)
+    │   ├── layout.tsx        # Root layout (Bootstrap 5 CSS)
+    │   ├── page.tsx          # Beranda awal sistem
+    │   ├── (auth)/           # Halaman login & lupa password
+    │   └── (dashboard)/      # Halaman area sistem terproteksi
+    │       ├── layout.tsx    # Layout dashboard (Navbar, Sidebar, Content)
+    │       ├── page.tsx      # Halaman utama ringkasan dashboard
+    │       ├── jemaat/       # Halaman modul Data Jemaat
+    │       ├── surat/        # Halaman modul Layanan Surat
+    │       ├── keuangan/     # Halaman modul Keuangan
+    │       └── jadwal-warta/ # Halaman modul Jadwal & Warta
     │
-    ├── components/                    # Komponen UI bersama (Reusable Components)
-    │   ├── common/                    # Komponen atomik (Button, Modal, Table, Badge)
-    │   ├── feedback/                  # Komponen umpan balik (LoadingSpinner, Alert, EmptyState)
-    │   ├── forms/                     # Komponen input form (FormInput, FormSelect)
-    │   └── layouts/                   # Komponen tata letak (Header, Sidebar, Footer)
+    ├── components/           # Komponen UI bersama (Reusable UI)
+    │   ├── common/           # Button, Modal, Table, Badge
+    │   ├── forms/            # FormInput, FormSelect
+    │   ├── feedback/         # Alert, LoadingSpinner, EmptyState
+    │   └── layouts/          # Header, Sidebar, Footer
     │
-    ├── features/                      # Domain Feature Modules (6 Modul Utama)
-    │   ├── jemaat/                    # Modul A: Data Jemaat
-    │   │   ├── actions/               # Server Actions mutasi data
-    │   │   ├── components/            # Komponen visual khusus domain
-    │   │   ├── hooks/                 # Custom React hooks khusus domain
-    │   │   ├── services/              # Query data access layer Supabase
-    │   │   ├── types/                 # Interface dan tipe data TypeScript domain
-    │   │   ├── validations/           # Skema validasi Zod
-    │   │   └── index.ts               # Barrel export modul
-    │   │
-    │   ├── surat-arsip/               # Modul B: Layanan Surat dan Arsip
-    │   ├── keuangan/                  # Modul C: Keuangan Gereja
-    │   ├── jadwal-kegiatan/           # Modul D: Jadwal dan Kegiatan
-    │   ├── warta-pengumuman/          # Modul E: Warta dan Pengumuman
-    │   └── pengguna-akses/            # Modul F: Pengguna dan Hak Akses
+    ├── features/             # Pengelompokan 4 modul utama
+    │   ├── jemaat/           # Modul 1: Data Jemaat (components, actions.ts, types.ts)
+    │   ├── surat/            # Modul 2: Layanan Surat (components, actions.ts, types.ts)
+    │   ├── keuangan/         # Modul 3: Keuangan (components, actions.ts, types.ts)
+    │   └── jadwal-warta/     # Modul 4: Jadwal & Warta (components, actions.ts, types.ts)
     │
-    ├── hooks/                         # Shared React custom hooks (useDebounce, usePagination, useModal)
-    ├── lib/                           # Integrasi pustaka eksternal & konfigurasi
-    │   ├── auth/                      # Matriks Role dan Permission (RBAC)
-    │   ├── constants/                 # Konstanta rute URL dan konfigurasi aplikasi
-    │   └── supabase/                  # Instance Supabase client (browser, server, middleware)
-    ├── types/                         # Definisi tipe global TypeScript (Database, Common, Auth)
-    └── utils/                         # Fungsi helper (formatters, validators, storage helper)
+    ├── lib/                  # Konfigurasi Supabase & konstanta
+    │   ├── supabase/         # Client (browser, server, middleware)
+    │   ├── auth/             # Definisi 2 role pengguna (warga & pengurus)
+    │   └── constants/        # Definisi rute navigasi aplikasi
+    │
+    ├── types/                # Definisi tipe global TypeScript
+    └── utils/                # Fungsi pembantu (format tanggal, rupiah, dll.)
 ```
 
 ---
 
-## 7. Architecture Overview
+## 6. Penjelasan Fungsi Setiap Folder
 
-Arsitektur aplikasi dibangun di atas prinsip **Feature-Driven Architecture** dengan pemisahan lapisan (layering) yang tegas:
-
-1. **Client / UI Layer**:
-   Dibangun dengan Next.js Client Components dan Bootstrap 5. Bertugas mengelola interaksi formulir, state lokal antarmuka, dan memberikan umpan balik visual secara cepat.
-2. **Server Runtime Layer (Next.js Server Actions)**:
-   Bertindak sebagai Application Controller & Business Logic Layer. Menerima payload formulir, melakukan verifikasi session otentikasi, validasi data menggunakan Zod, serta memanggil Data Access Service.
-3. **Data Access & Security Layer (Supabase PostgreSQL)**:
-   Seluruh interaksi data tunduk pada kebijakan **Row Level Security (RLS)**. Akses data oleh pengguna hanya dimungkinkan jika diizinkan oleh aturan otorisasi berbasis peran (RBAC) yang terpasang pada skema basis data.
-
-Detail arsitektur dan diagram alur data dapat dipelajari pada [docs/architecture.md](file:///d:/GKJ_WEB/docs/architecture.md).
-
----
-
-## 8. Frontend and Backend Responsibilities
-
-Meskipun Frontend dan Backend berada dalam satu repositori monolitik Next.js, pembagian tanggung jawab didefinisikan secara tegas:
-
-### Tanggung Jawab Tim Frontend:
-- Penyusunan rute dan struktur navigasi halaman (`src/app/`).
-- Desain antarmuka pengguna berbasis Bootstrap 5 yang responsif dan konsisten.
-- Pembuatan dan pemeliharaan komponen UI reusable (`src/components/`).
-- Pengelolaan state formulir dan validasi interaktif di sisi klien (UX) menggunakan Zod.
-- Integrasi konsumsi data dari Server Actions dan penanganan status visual (loading, alert error, modal konfirmasi).
-
-### Tanggung Jawab Tim Backend:
-- Implementasi Server Actions dan alur logika bisnis (`src/features/*/actions/`).
-- Pengelolaan koneksi dan query basis data Supabase (`src/features/*/services/`, `src/lib/supabase/`).
-- Perancangan dan migrasi skema tabel PostgreSQL (`supabase/migrations/`).
-- Penerapan aturan keamanan basis data melalui Row Level Security (RLS).
-- Manajemen otentikasi session, otorisasi peran (RBAC), dan pencatatan audit trail (`activity_logs`).
-- Pengelolaan file storage Supabase dan modul pembuatan dokumen resmi (PDF/Excel).
-
-Panduan lengkap mengenai pembagian kerja tim dapat dibaca pada [docs/team-responsibilities.md](file:///d:/GKJ_WEB/docs/team-responsibilities.md).
+- **`src/app/`**: Mengatur routing halaman web. Halaman di dalam `(dashboard)/` memuat rute untuk masing-masing modul.
+- **`src/components/`**: Berisi komponen antarmuka umum (tombol, input formulir, modal, navbar, sidebar) berbasis Bootstrap 5.
+- **`src/features/`**: Inti logika modular. Setiap modul mengisolasi komponen UI (`components/`), Server Actions (`actions.ts`), dan tipe data (`types.ts`).
+- **`src/lib/`**: Konfigurasi koneksi Supabase (browser client dan server client dengan proteksi cookie) serta otorisasi role.
+- **`src/types/`**: Kontrak data TypeScript untuk tabel database, sesi pengguna, dan pagination.
+- **`src/utils/`**: Utilitas umum seperti pemformat mata uang Rupiah dan tanggal Indonesia.
+- **`public/`**: Tempat menyimpan file statis seperti logo gereja dan favicon.
+- **`supabase/`**: Menyimpan skrip SQL (`schema.sql` dan `seed.sql`) untuk konfigurasi database Supabase.
+- **`docs/`**: Dokumentasi teknis arsitektur proyek.
 
 ---
 
-## 9. Database Overview
+## 7. Pembagian Tanggung Jawab Frontend dan Backend
 
-Basis data SIM GKJ Mijen menggunakan PostgreSQL 15 yang di-host pada Supabase. Basis data mencakup 17 tabel yang dikelompokkan sesuai 6 domain modul:
+Frontend dan Backend berada dalam satu repositori Next.js yang sama, dengan pemisahan tugas secara logis:
 
-- **Otorisasi & Akun**: `roles`, `profiles`, `activity_logs`.
-- **Kependudukan Gerejawi**: `wilayah`, `keluarga`, `jemaat`, `riwayat_sakramen`.
-- **Persuratan & Dokumen**: `jenis_surat`, `permohonan_surat`, `arsip_dokumen`.
-- **Keuangan**: `kategori_keuangan`, `transaksi_keuangan`, `penghitungan_persembahan`.
-- **Kegiatan & Pelayanan**: `komisi`, `anggota_komisi`, `jadwal_kegiatan`, `penugasan_petugas`.
-- **Informasi Jemaat**: `warta_jemaat`, `pengumuman`.
+### Tim Frontend:
+- Mengembangkan tampilan halaman di `src/app/`.
+- Membangun layout dan navigasi (`Sidebar.tsx`, `Header.tsx`).
+- Membuat komponen antarmuka yang dapat digunakan kembali di `src/components/`.
+- Mengimplementasikan formulir dan tampilan data di `src/features/*/components/`.
+- Menghubungkan form klien dengan Server Actions.
 
-Detail skema relasional, indeks, dan diagram ERD dapat dipelajari pada [docs/database-design.md](file:///d:/GKJ_WEB/docs/database-design.md).
-
----
-
-## 10. Supabase Integration
-
-Integrasi Supabase diimplementasikan melalui paket resmi `@supabase/ssr` dan `@supabase/supabase-js` dengan tiga jenis client:
-
-1. **Browser Client (`src/lib/supabase/client.ts`)**:
-   Digunakan di Client Component jika diperlukan interaksi langsung dari peramban web dengan batasan RLS aktif.
-2. **Server Client (`src/lib/supabase/server.ts`)**:
-   Digunakan pada Server Components, Server Actions, dan Route Handlers. Mengakses token JWT sesi pengguna melalui cookie HTTP-only yang aman.
-3. **Admin Client (`createAdminClient()`)**:
-   Menggunakan `SUPABASE_SERVICE_ROLE_KEY` khusus untuk proses backend internal / background tasks yang memerlukan bypass RLS. Tidak boleh diekspos ke sisi klien.
-4. **Middleware Session Update (`src/lib/supabase/middleware.ts`)**:
-   Memperbarui masa berlaku token autentikasi pada setiap navigasi rute dan mengarahkan pengguna yang belum login ke halaman login.
+### Tim Backend:
+- Mengonfigurasi dan mengelola integrasi Supabase di `src/lib/supabase/`.
+- Mengimplementasikan logika Server Actions di `src/features/*/actions.ts`.
+- Mengelola otentikasi Supabase Auth dan pembatasan hak akses 2 role (`warga` vs `pengurus`).
+- Merancang dan menjalankan skema database PostgreSQL (`supabase/schema.sql`) serta Row Level Security (RLS).
+- Mengelola bucket Supabase Storage (arsip warta PDF dan lampiran berkas).
 
 ---
 
-## 11. Environment Variables
+## 8. Konfigurasi Environment Supabase
 
-Salin berkas `.env.example` menjadi `.env.local` pada root proyek:
+Salin file `.env.example` menjadi `.env.local`:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Berikut adalah daftar variabel lingkungan yang dibutuhkan:
+Isi variabel konfigurasi di `.env.local` sesuai dengan project Supabase Anda:
 
 ```env
-# ------------------------------------------------------------------------------
-# 1. KONFIGURASI UMUM NEXT.JS
-# ------------------------------------------------------------------------------
-NEXT_PUBLIC_APP_NAME="SIM GKJ Mijen"
-NEXT_PUBLIC_APP_DESCRIPTION="Sistem Informasi Manajemen Gereja Kristen Jawa Mijen"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-
-# ------------------------------------------------------------------------------
-# 2. SUPABASE (CLIENT-SIDE)
-# ------------------------------------------------------------------------------
-# URL project instance Supabase Anda
+# URL Instance Supabase
 NEXT_PUBLIC_SUPABASE_URL="https://your-project-id.supabase.co"
 
-# Supabase Public Anonymous API Key (Aman diakses browser, dibatasi RLS)
+# Public Anon Key (Aman di sisi browser, dibatasi oleh RLS)
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key-here"
 
-# ------------------------------------------------------------------------------
-# 3. SUPABASE (SERVER-SIDE ONLY - RAHASIA)
-# ------------------------------------------------------------------------------
-# Service Role Key (BYPASS RLS - HANYA DI SERVER ACTIONS / BACKEND)
+# Service Role Secret Key (Hanya untuk server/backend, jangan diakses di browser)
 SUPABASE_SERVICE_ROLE_KEY="your-service-role-key-here"
-
-# ------------------------------------------------------------------------------
-# 4. KONFIGURASI STORAGE BUCKET
-# ------------------------------------------------------------------------------
-NEXT_PUBLIC_STORAGE_BUCKET_DOCS="documents"
-NEXT_PUBLIC_STORAGE_BUCKET_WARTE="warta"
-NEXT_PUBLIC_STORAGE_BUCKET_AVATARS="avatars"
 ```
-
-> [!CAUTION]
-> Jangan pernah melakukan commit file `.env.local` atau kredensial rahasia (`SUPABASE_SERVICE_ROLE_KEY`) ke repositori GitHub.
 
 ---
 
-## 12. Installation and Setup
-
-### Prasyarat Sistem:
-- Node.js versi 18.18.0 atau versi 20+ LTS
-- Package Manager: npm (atau pnpm / yarn)
-- Akun Supabase aktif (atau Supabase CLI lokal terpasang)
-- Git terpasang
-
-### Langkah Instalasi:
+## 9. Cara Instalasi dan Menjalankan Proyek
 
 1. **Clone Repositori**:
    ```bash
-   git clone https://github.com/[placeholder-org]/sim-gkj-mijen.git
-   cd sim-gkj-mijen
+   git clone https://github.com/bilaaah/GKJMijen.git
+   cd GKJMijen
    ```
 
-2. **Instal Dependensi Proyek**:
+2. **Beralih ke Branch `dev`**:
+   ```bash
+   git checkout dev
+   ```
+
+3. **Instal Dependensi**:
    ```bash
    npm install
    ```
 
-3. **Konfigurasi Environment**:
-   Salin file `.env.example` ke `.env.local` dan lengkapi konfigurasi Supabase Anda:
-   ```bash
-   cp .env.example .env.local
-   ```
+4. **Siapkan Environment**:
+   Salin `.env.example` ke `.env.local` dan masukkan kunci Supabase Anda.
 
-4. **Inisialisasi Database Supabase (Opsional jika menggunakan Supabase CLI)**:
-   ```bash
-   # Menjalankan Supabase lokal
-   npx supabase start
-
-   # Menjalankan migrasi DDL dan seed data
-   npx supabase db reset
-   ```
-
-5. **Generate TypeScript Types dari Database (Opsional)**:
-   ```bash
-   npm run supabase:gen-types
-   ```
-
-6. **Jalankan Development Server**:
+5. **Jalankan Development Server**:
    ```bash
    npm run dev
    ```
-   Buka peramban web pada alamat [http://localhost:3000](http://localhost:3000).
+   Akses aplikasi melalui browser di **[http://localhost:3000](http://localhost:3000)**.
 
----
-
-## 13. Development Workflow
-
-1. **Menjalankan Server Pengembangan**:
-   ```bash
-   npm run dev
-   ```
-2. **Pengecekan Tipe TypeScript**:
-   Lakukan type-checking sebelum membuat pull request:
+6. **Pengecekan Tipe TypeScript**:
    ```bash
    npm run type-check
    ```
-3. **Pengecekan Linter**:
-   ```bash
-   npm run lint
-   ```
-4. **Build Aplikasi**:
-   Memverifikasi bahwa proses kompilasi produksi berhasil:
-   ```bash
-   npm run build
-   ```
 
 ---
 
-## 14. Git Branching and Collaboration Guidelines
+## 10. Panduan Kolaborasi GitHub
 
-Untuk menjaga integritas dan stabilitas kode, tim pengembang wajib mematuhi standar branching berikut:
-
-### Struktur Cabang (Branches):
-- **`main`**: Cabang produksi yang siap deploy. Hanya menerima merge dari `staging` melalui Pull Request (PR) yang telah disetujui.
-- **`staging` / `develop`**: Cabang integrasi seluruh fitur yang sedang diuji.
-- **Feature Branches**: Cabang khusus pengembangan fitur, dibuat dari `develop` dengan format penamaan:
-  - `feat/jemaat-crud-form`
-  - `feat/keuangan-persembahan`
-  - `fix/surat-validation-bug`
-  - `docs/update-architecture`
-
-### Alur Kerja Pull Request (PR):
-1. Pengembang membuat cabang baru sesuai fitur yang dikerjakan.
-2. Lakukan commit secara berkala dengan pesan yang deskriptif mengikuti standar Conventional Commits:
-   - `feat(jemaat): add form input validation for nomor induk`
-   - `fix(keuangan): correct date formatting in transaction table`
-   - `docs(readme): update environment variable documentation`
-3. Pastikan `npm run type-check` dan `npm run lint` lolos tanpa error sebelum melakukan push.
-4. Buat Pull Request ke cabang `develop`.
-5. PR wajib direview minimal oleh 1 (satu) orang rekan tim sebelum di-merge.
-
----
-
-## 15. Coding Conventions
-
-- **Direktori**: Gunakan format `kebab-case` (contoh: `jadwal-kegiatan`, `pengguna-akses`).
-- **Komponen React**: Gunakan `PascalCase` untuk nama file dan nama fungsi komponen (contoh: `JemaatTable.tsx`, `FormInput.tsx`).
-- **File Utilitas / Hooks**: Gunakan `camelCase` (contoh: `formatters.ts`, `usePagination.ts`).
-- **Server Actions**: Fungsi diawali kata kerja dan diakhiri kata `Action` (contoh: `createJemaatAction`).
-- **Tabel & Kolom Basis Data**: Menggunakan `snake_case` (contoh: `nomor_induk`, `transaksi_keuangan`).
-- **Path Alias**: Selalu gunakan alias `@/*` yang merujuk ke direktori `src/*`.
-
-Panduan selengkapnya tercantum pada [docs/coding-standards.md](file:///d:/GKJ_WEB/docs/coding-standards.md).
-
----
-
-*SIM GKJ Mijen – Membangun Pelayanan Gerejawi yang Rapi, Transparan, dan Akuntabel.*
+1. **Branch Utama**:
+   - `main`: Branch produksi yang stabil.
+   - `dev`: Branch utama pengembangan (*default working branch*). Seluruh anggota tim bekerja berbasis branch `dev`.
+2. **Feature Branching**:
+   Buat branch baru dari `dev` untuk setiap tugas baru:
+   - Frontend: `git checkout -b feat/fe-jemaat-form dev`
+   - Backend: `git checkout -b feat/be-surat-actions dev`
+3. **Commit Message**:
+   Gunakan pesan commit yang jelas, contoh:
+   - `feat(jemaat): buat komponen form input jemaat`
+   - `feat(keuangan): buat server action pencatatan kas`
+   - `fix(surat): perbaiki validasi status permohonan`
+4. **Pull Request (PR)**:
+   Ajukan PR ke branch `dev` untuk direview oleh rekan tim sebelum dimerge.

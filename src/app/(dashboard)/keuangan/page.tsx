@@ -1,11 +1,15 @@
-import { TransaksiTable } from '@/features/keuangan';
+import { KeuanganList } from '@/features/keuangan';
 
-export default function KeuanganIndexPage() {
+export default function KeuanganPage() {
   return (
     <div>
-      <h2 className="fw-bold mb-3">Keuangan Gereja</h2>
-      <p className="text-muted">Ikhtisar transaksi penerimaan, pengeluaran, dan persembahan GKJ Mijen.</p>
-      <TransaksiTable data={[]} />
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 className="fw-bold">Keuangan</h2>
+          <p className="text-muted mb-0">Modul pencatatan transaksi kas masuk, kas keluar, dan persembahan.</p>
+        </div>
+      </div>
+      <KeuanganList data={[]} />
     </div>
   );
 }

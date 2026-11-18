@@ -1,1 +1,1 @@
-export * from './JemaatTable';
+export * from './JemaatList';

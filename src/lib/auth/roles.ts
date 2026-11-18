@@ -1,19 +1,18 @@
-import type { UserRole } from '@/types/database.types';
+/**
+ * Definisi Role Pengguna SIM GKJ Mijen
+ * Sistem memiliki 2 role utama:
+ * 1. warga (Warga Jemaat)
+ * 2. pengurus (Pengurus Gereja)
+ */
 
-export const USER_ROLES: Record<string, UserRole> = {
-  SUPER_ADMIN: 'super_admin',
-  PENDETA: 'pendeta',
-  MAJELIS: 'majelis',
-  TATA_USAHA: 'tata_usaha',
-  BENDAHARA: 'bendahara',
-  WARGA: 'warga',
-} as const;
+export type UserRole = 'warga' | 'pengurus';
+
+export const USER_ROLES = {
+  WARGA: 'warga' as UserRole,
+  PENGURUS: 'pengurus' as UserRole,
+};
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  super_admin: 'Super Administrator',
-  pendeta: 'Pendeta',
-  majelis: 'Majelis Jemaat',
-  tata_usaha: 'Tata Usaha / Sekretariat',
-  bendahara: 'Bendahara Gereja',
   warga: 'Warga Jemaat',
+  pengurus: 'Pengurus Gereja',
 };
