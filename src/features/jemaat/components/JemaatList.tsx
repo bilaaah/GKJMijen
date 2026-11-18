@@ -76,11 +76,12 @@ export const JemaatList: React.FC = () => {
         columns={[
           { header: 'Nama', cell: (j) => <Person name={j.nama} sub={j.alamat} /> },
           { header: 'No. HP', className: 'nowrap num', cell: (j) => j.no_hp || <span className="dim">–</span> },
-          { header: 'Wilayah', className: 'nowrap', cell: (j) => j.wilayah },
+          { header: 'Wilayah', cell: (j) => j.wilayah },
           { header: 'Baptis', cell: (j) => <YesNoBadge value={j.status_baptis} /> },
           { header: 'Sidi', cell: (j) => <YesNoBadge value={j.status_sidi} /> },
           {
             header: 'Akun Tertaut',
+            hideMd: true,
             cell: (j) =>
               j.id_profiles ? (
                 <span className="linked" title={db.profiles.find((p) => p.id === j.id_profiles)?.email}>

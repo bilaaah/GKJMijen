@@ -91,7 +91,7 @@ export const WartaList: React.FC = () => {
               </>
             ),
           },
-          { header: 'Penulis', className: 'nowrap', cell: (w) => profileById.get(w.id_profiles)?.nama ?? '–' },
+          { header: 'Penulis', className: 'nowrap', hideMd: true, cell: (w) => profileById.get(w.id_profiles)?.nama ?? '–' },
           { header: 'Status', cell: (w) => (w.status === 'terbit' ? <Badge tone="ok">Terbit</Badge> : <Badge tone="neu">Draf</Badge>) },
           { header: 'Tanggal Terbit', className: 'nowrap', cell: (w) => formatTanggalPendek(w.tanggal_terbit) },
           {

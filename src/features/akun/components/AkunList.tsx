@@ -140,7 +140,7 @@ export const AkunList: React.FC = () => {
               );
             },
           },
-          { header: 'Tanggal Daftar', className: 'nowrap', cell: (p) => formatTanggalPendek(p.created_at) },
+          { header: 'Tanggal Daftar', className: 'nowrap', hideMd: true, cell: (p) => formatTanggalPendek(p.created_at) },
           {
             header: '',
             className: 'acts',

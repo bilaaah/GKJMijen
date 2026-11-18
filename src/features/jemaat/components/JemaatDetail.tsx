@@ -108,11 +108,11 @@ export const JemaatDetail: React.FC<{ id: string }> = ({ id }) => {
         <Card title="Riwayat Permohonan Surat" aside={<span className="sub">{riwayat.length} permohonan</span>}>
           {riwayat.length ? (
             <div className="tbl-wrap flat">
-              <table className="tbl">
+              <table className="tbl stackable">
                 <thead>
                   <tr>
-                    <th>Tanggal</th>
                     <th>Jenis Surat</th>
+                    <th>Tanggal</th>
                     <th>Nomor Surat</th>
                     <th>Status</th>
                     <th />
@@ -121,13 +121,19 @@ export const JemaatDetail: React.FC<{ id: string }> = ({ id }) => {
                 <tbody>
                   {riwayat.map((s) => (
                     <tr key={s.id}>
-                      <td className="nowrap">{formatTanggalPendek(s.tanggal_pengajuan)}</td>
-                      <td>{JENIS_SURAT_LABEL[s.jenis_surat]}</td>
-                      <td className="num nowrap">{s.nomor_surat || '–'}</td>
-                      <td>
+                      <td className="td-primary" data-label="Jenis Surat">
+                        {JENIS_SURAT_LABEL[s.jenis_surat]}
+                      </td>
+                      <td className="nowrap" data-label="Tanggal">
+                        {formatTanggalPendek(s.tanggal_pengajuan)}
+                      </td>
+                      <td className="num nowrap" data-label="Nomor Surat">
+                        {s.nomor_surat || '–'}
+                      </td>
+                      <td data-label="Status">
                         <Badge tone={STATUS_SURAT_TONE[s.status]}>{STATUS_SURAT_LABEL[s.status]}</Badge>
                       </td>
-                      <td className="acts">
+                      <td className="acts" data-label="">
                         <Button size="sm" variant="outline" onClick={() => router.push(routeSuratProses(s.id))}>
                           Buka
                         </Button>

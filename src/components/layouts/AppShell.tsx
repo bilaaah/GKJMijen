@@ -31,6 +31,14 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
     window.scrollTo(0, 0);
   }, [path]);
 
+  // Kunci scroll halaman saat menu ponsel terbuka
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
   if (!ready || !user) {
     return (
       <div className="boot">

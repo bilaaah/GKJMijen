@@ -67,6 +67,7 @@ export const SuratList: React.FC = () => {
           { header: 'Tanggal Pengajuan', className: 'nowrap', cell: (s) => formatTanggalPendek(s.tanggal_pengajuan) },
           {
             header: 'Nama Pemohon',
+            primary: true,
             cell: (s) => {
               const j = jemaatById.get(s.id_jemaat);
               return <Person name={j?.nama ?? '–'} sub={j?.wilayah} />;
@@ -81,7 +82,7 @@ export const SuratList: React.FC = () => {
             ),
           },
           { header: 'Status', cell: (s) => <Badge tone={STATUS_SURAT_TONE[s.status]}>{STATUS_SURAT_LABEL[s.status]}</Badge> },
-          { header: 'Diproses Oleh', cell: (s) => (s.id_pengurus ? profileById.get(s.id_pengurus)?.nama : <span className="dim">–</span>) },
+          { header: 'Diproses Oleh', hideMd: true, cell: (s) => (s.id_pengurus ? profileById.get(s.id_pengurus)?.nama : <span className="dim">–</span>) },
           {
             header: '',
             className: 'acts',

@@ -54,6 +54,37 @@ const Kalender: React.FC<{ kegiatan: Kegiatan[]; today: string; onOpen: (k: Kegi
           );
         })}
       </div>
+      {/* Tampilan agenda untuk ponsel: hanya hari yang punya kegiatan */}
+      <div className="cal-agenda">
+        {(() => {
+          const bulanIni = kegiatan.filter((k) => k.tanggal.startsWith(bulan)).sort(byDateTime);
+          const hari = Array.from(new Set(bulanIni.map((k) => k.tanggal)));
+          if (!hari.length) return <p className="muted ag-empty">Tidak ada kegiatan di bulan ini.</p>;
+          return hari.map((iso) => {
+            const d = parseTanggal(iso);
+            return (
+              <div className={`ag-day ${iso === today ? 'today' : ''}`} key={iso}>
+                <div className="ev-date">
+                  <b>{d.getDate()}</b>
+                  <small>{NAMA_HARI[d.getDay()].slice(0, 3)}</small>
+                </div>
+                <div className="ag-list">
+                  {bulanIni
+                    .filter((k) => k.tanggal === iso)
+                    .map((k) => (
+                      <button key={k.id} type="button" className={`ag-ev ${k.nama_kegiatan.startsWith('Ibadah') ? 'ibadah' : ''}`} onClick={() => onOpen(k)}>
+                        <b>{k.nama_kegiatan}</b>
+                        <small>
+                          {formatJam(k.jam)} · {k.lokasi}
+                        </small>
+                      </button>
+                    ))}
+                </div>
+              </div>
+            );
+          });
+        })()}
+      </div>
     </div>
   );
 };
@@ -151,6 +182,7 @@ export const KegiatanList: React.FC = () => {
             { header: 'Lokasi', cell: (k) => k.lokasi },
             {
               header: 'Petugas',
+              hideMd: true,
               cell: (k) => {
                 const l = k.petugas.split('\n').filter(Boolean);
                 return (
@@ -166,7 +198,7 @@ export const KegiatanList: React.FC = () => {
                 );
               },
             },
-            { header: 'Dibuat Oleh', className: 'nowrap', cell: (k) => profileById.get(k.id_profiles)?.nama ?? '–' },
+            { header: 'Dibuat Oleh', className: 'nowrap', hideMd: true, cell: (k) => profileById.get(k.id_profiles)?.nama ?? '–' },
             {
               header: '',
               className: 'acts',

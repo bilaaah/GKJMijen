@@ -89,20 +89,21 @@ export const KeuanganList: React.FC = () => {
           { header: 'Jenis', cell: (t) => (t.jenis_transaksi === 'pemasukan' ? <Badge tone="ok">Pemasukan</Badge> : <Badge tone="bad">Pengeluaran</Badge>) },
           {
             header: 'Kategori',
+            hideMd: true,
             cell: (t) => (
               <Badge tone="rose" dot={false}>
                 {t.kategori}
               </Badge>
             ),
           },
-          { header: 'Keterangan', cell: (t) => t.keterangan },
+          { header: 'Keterangan', primary: true, cell: (t) => t.keterangan },
           {
             header: 'Nominal',
             className: 'r nowrap num',
             cell: (t) => (t.jenis_transaksi === 'pemasukan' ? <span className="amt-in">+ {formatRp(t.nominal)}</span> : <span className="amt-out">− {formatRp(t.nominal)}</span>),
           },
           { header: 'Bukti', cell: (t) => (t.bukti_url ? <IconButton icon="image" label="Lihat bukti" onClick={() => setBukti(t)} /> : <span className="dim">–</span>) },
-          { header: 'Dicatat Oleh', className: 'nowrap', cell: (t) => profileById.get(t.id_profiles)?.nama ?? '–' },
+          { header: 'Dicatat Oleh', className: 'nowrap', hideMd: true, cell: (t) => profileById.get(t.id_profiles)?.nama ?? '–' },
           {
             header: '',
             className: 'acts',

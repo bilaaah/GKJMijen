@@ -95,11 +95,11 @@ export const DashboardOverview: React.FC = () => {
           }
         >
           <div className="tbl-wrap flat">
-            <table className="tbl mini">
+            <table className="tbl mini stackable">
               <thead>
                 <tr>
-                  <th>Tanggal</th>
                   <th>Pemohon</th>
+                  <th>Tanggal</th>
                   <th>Jenis</th>
                   <th>Status</th>
                 </tr>
@@ -107,14 +107,18 @@ export const DashboardOverview: React.FC = () => {
               <tbody>
                 {terbaru.map((s) => (
                   <tr key={s.id} className="click" onClick={() => router.push(routeSuratProses(s.id))}>
-                    <td className="nowrap">{formatTanggalPendek(s.tanggal_pengajuan)}</td>
-                    <td>{jemaatById.get(s.id_jemaat)?.nama ?? '–'}</td>
-                    <td>
+                    <td className="td-primary" data-label="Pemohon">
+                      {jemaatById.get(s.id_jemaat)?.nama ?? '–'}
+                    </td>
+                    <td className="nowrap" data-label="Tanggal">
+                      {formatTanggalPendek(s.tanggal_pengajuan)}
+                    </td>
+                    <td data-label="Jenis">
                       <Badge tone="rose" dot={false}>
                         {JENIS_SURAT_LABEL[s.jenis_surat].replace('Surat ', '')}
                       </Badge>
                     </td>
-                    <td>
+                    <td data-label="Status">
                       <Badge tone={STATUS_SURAT_TONE[s.status]}>{STATUS_SURAT_LABEL[s.status]}</Badge>
                     </td>
                   </tr>

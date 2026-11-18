@@ -8,6 +8,16 @@ export interface Column<T> {
   header: string;
   cell: (row: T) => React.ReactNode;
   className?: string;
+  /** Sembunyikan kolom saat area tabel sedang (821–1080px) agar tabel tidak perlu digeser. */
+  hideMd?: boolean;
+  /** Jadikan kolom ini judul kartu di tampilan ponsel/tablet (default: kolom pertama). */
+  primary?: boolean;
+}
+
+/** Kelas sel: kolom utama jadi judul kartu di ponsel, kolom opsional disembunyikan di layar sedang. */
+function cellClass<T>(c: Column<T>, i: number, columns: Column<T>[]): string | undefined {
+  const isPrimary = columns.some((x) => x.primary) ? !!c.primary : i === 0;
+  return [c.className, isPrimary ? 'td-primary' : '', c.hideMd ? 'hide-md' : ''].filter(Boolean).join(' ') || undefined;
 }
 
 export interface TableProps<T> {
@@ -47,11 +57,11 @@ export function Table<T>({
         {data.length === 0 ? (
           <EmptyState title={emptyTitle} description={emptyMessage} />
         ) : (
-          <table className="tbl">
+          <table className="tbl stackable">
             <thead>
               <tr>
                 {columns.map((c, i) => (
-                  <th key={i} className={c.className}>
+                  <th key={i} className={cellClass(c, i, columns)}>
                     {c.header}
                   </th>
                 ))}
@@ -65,7 +75,7 @@ export function Table<T>({
                   onClick={onRowClick ? () => onRowClick(r) : undefined}
                 >
                   {columns.map((c, i) => (
-                    <td key={i} className={c.className}>
+                    <td key={i} className={cellClass(c, i, columns)} data-label={c.header}>
                       {c.cell(r)}
                     </td>
                   ))}
