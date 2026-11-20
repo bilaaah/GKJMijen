@@ -24,6 +24,8 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   useEffect(() => {
     if (ready && !user) router.replace(ROUTES.AUTH.LOGIN);
+    // Warga Jemaat tidak boleh membuka panel pengurus: arahkan ke portal jemaat.
+    if (ready && user?.peran === 'warga') router.replace(ROUTES.PORTAL.ROOT);
   }, [ready, user, router]);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
     };
   }, [mobileOpen]);
 
-  if (!ready || !user) {
+  if (!ready || !user || user.peran !== 'pengurus') {
     return (
       <div className="boot">
         <LoadingSpinner label="Memuat halaman…" />
@@ -65,7 +67,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
           userRole={ROLE_LABELS[user.peran]}
           onToggleSidebar={() => (window.innerWidth < 992 ? setMobileOpen((o) => !o) : setCollapsed((c) => !c))}
           onLogout={handleLogout}
-          onOpenLanding={() => toast('Landing page publik belum dibuat di tahap ini.', 'info')}
+          onOpenLanding={() => router.push(ROUTES.HOME)}
         />
         <main className="content">{children}</main>
       </div>

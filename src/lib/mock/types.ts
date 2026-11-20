@@ -40,6 +40,8 @@ export interface PermohonanSurat {
   nomor_surat: string;
   url_lampiran: string;
   url_surat: string;
+  /** Isian formulir dari warga (baris "Label: isi"). Opsional, belum ada di ERD. */
+  keterangan?: string;
 }
 
 export type JenisTransaksi = 'pemasukan' | 'pengeluaran';

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Icon, LogoMark } from '@/components/common';
 import { FormInput, PasswordInput } from '@/components/forms';
 import { Alert, useToast } from '@/components/feedback';
-import { useMock, DEMO_EMAIL } from '@/lib/mock';
+import { useMock, DEMO_EMAIL, DEMO_WARGA_EMAIL } from '@/lib/mock';
 import { isValidEmail } from '@/utils/validators';
 import { ROUTES } from '@/lib/constants/routes';
 
@@ -32,7 +32,10 @@ export default function LoginPage() {
     if (!res.ok) return setAlert(res.reason);
     const p = db.profiles.find((x) => x.email.toLowerCase() === email.toLowerCase());
     toast(`Selamat datang, ${p?.nama ?? ''}.`);
-    router.push(ROUTES.DASHBOARD.ROOT);
+    // Warga ke portal jemaat, pengurus ke panel admin. ?next= dipakai bila login dipicu dari halaman lain.
+    const next = new URLSearchParams(window.location.search).get('next');
+    if (p?.peran === 'warga') router.push(next?.startsWith(ROUTES.PORTAL.ROOT) ? next : ROUTES.PORTAL.ROOT);
+    else router.push(ROUTES.DASHBOARD.ROOT);
   };
 
   return (
@@ -75,6 +78,18 @@ export default function LoginPage() {
             className="link"
             onClick={() => {
               setEmail(DEMO_EMAIL);
+              setPassword('kasih2026');
+            }}
+          >
+            Isi otomatis
+          </button>
+          <br />
+          Akun demo warga: <b>{DEMO_WARGA_EMAIL}</b>.{' '}
+          <button
+            type="button"
+            className="link"
+            onClick={() => {
+              setEmail(DEMO_WARGA_EMAIL);
               setPassword('kasih2026');
             }}
           >

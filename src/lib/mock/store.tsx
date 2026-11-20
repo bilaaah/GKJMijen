@@ -72,7 +72,6 @@ export function MockProvider({ children }: { children: React.ReactNode }) {
     (email: string, password: string): LoginResult => {
       const p = db.profiles.find((x) => x.email.toLowerCase() === email.trim().toLowerCase());
       if (!p || password.length < 8) return { ok: false, reason: 'invalid' };
-      if (p.peran !== 'pengurus') return { ok: false, reason: 'warga' };
       setUserId(p.id);
       return { ok: true };
     },

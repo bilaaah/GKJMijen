@@ -24,6 +24,12 @@ export const ROUTES = {
     AKUN: '/akun',
     PROFIL: '/profil',
   },
+  /** Portal Warga Jemaat (sisi user) */
+  PORTAL: {
+    ROOT: '/portal',
+    AJUKAN: '/portal/ajukan',
+    STATUS: '/portal/status',
+  },
 } as const;
 
 export const routeJemaatDetail = (id: string) => `/jemaat/${id}`;
@@ -32,3 +38,4 @@ export const routeSuratProses = (id: string) => `/surat/${id}`;
 export const routeTransaksiUbah = (id: string) => `/keuangan/${id}`;
 export const routeKegiatanUbah = (id: string) => `/jadwal-warta/kegiatan/${id}`;
 export const routeWartaUbah = (id: string) => `/jadwal-warta/warta/${id}`;
+export const routePortalSurat = (id: string) => `/portal/status/${id}`;
