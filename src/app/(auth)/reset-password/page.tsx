@@ -4,12 +4,16 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/common';
 import { PasswordInput } from '@/components/forms';
-import { useToast } from '@/components/feedback';
+import { Alert, useToast } from '@/components/feedback';
+import { useData } from '@/lib/data';
 import { ROUTES } from '@/lib/constants/routes';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const toast = useToast();
+  const { gantiPassword } = useData();
+  const [loading, setLoading] = useState(false);
+  const [gagal, setGagal] = useState('');
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
   const [errors, setErrors] = useState<{ pw?: string; pw2?: string }>({});
@@ -22,21 +26,26 @@ export default function ResetPasswordPage() {
       <form
         className="form-stack"
         noValidate
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           const er: typeof errors = {};
           if (pw.length < 8) er.pw = 'Kata sandi minimal 8 karakter.';
           if (pw2 !== pw) er.pw2 = 'Konfirmasi kata sandi tidak cocok.';
           setErrors(er);
           if (Object.keys(er).length) return;
+          setLoading(true);
+          const res = await gantiPassword(pw);
+          setLoading(false);
+          if (!res.ok) return setGagal(res.message);
           toast('Kata sandi diperbarui. Silakan masuk dengan kata sandi baru.');
           router.push(ROUTES.AUTH.LOGIN);
         }}
       >
         <PasswordInput id="password" label="Kata Sandi Baru" required placeholder="Minimal 8 karakter" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} error={errors.pw} />
         <PasswordInput id="password2" label="Konfirmasi Kata Sandi Baru" required placeholder="Ulangi kata sandi baru" autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} error={errors.pw2} />
-        <Button type="submit" block>
-          Simpan Kata Sandi
+        {gagal && <Alert tone="bad">{gagal}</Alert>}
+        <Button type="submit" block disabled={loading}>
+          {loading ? 'Menyimpan…' : 'Simpan Kata Sandi'}
         </Button>
       </form>
     </>

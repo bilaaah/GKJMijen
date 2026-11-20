@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import { Button, Card, PageHeader } from '@/components/common';
 import { FilterSelect } from '@/components/forms';
 import { useToast } from '@/components/feedback';
-import { useMock, KATEGORI_TRANSAKSI, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type JenisTransaksi } from '@/lib/mock';
+import { useData, KATEGORI_TRANSAKSI, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type JenisTransaksi } from '@/lib/data';
 import { formatRp, hariIniISO, NAMA_BULAN } from '@/utils/formatters';
 
 /** Laporan & rekap kas bulanan (dihitung otomatis dari transaksi). */
 export const LaporanRekap: React.FC = () => {
-  const { db } = useMock();
+  const { db } = useData();
   const toast = useToast();
   const today = hariIniISO();
   const [bulan, setBulan] = useState(String(Number(today.slice(5, 7))));

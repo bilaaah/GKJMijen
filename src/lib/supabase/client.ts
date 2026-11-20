@@ -1,14 +1,16 @@
 import { createBrowserClient } from '@supabase/ssr';
 import type { Database } from '@/types/database.types';
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
+
+const buat = () => createBrowserClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+let cached: ReturnType<typeof buat> | null = null;
 
 /**
- * Membuat instance Supabase Client untuk Client Components di browser.
- * Digunakan khusus untuk interaksi langsung dari client jika diperlukan
- * dan terikat dengan Row Level Security (RLS).
+ * Supabase Client untuk Client Components di browser.
+ * Selalu memakai token pengguna yang sedang login, sehingga Row Level Security
+ * di database tetap berlaku. Satu instance dipakai bersama di seluruh halaman.
  */
 export function createClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-  return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
+  if (!cached) cached = buat();
+  return cached;
 }

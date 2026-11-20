@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, PageHeader } from '@/components/common';
-import { Field, FileDrop, FormInput, FormSelect, FormTextarea, readAsDataURL, RupiahInput, Segmented } from '@/components/forms';
+import { Field, FileDrop, FormInput, FormSelect, FormTextarea, RupiahInput, Segmented } from '@/components/forms';
 import { EmptyState, useToast } from '@/components/feedback';
-import { newId, useMock, KATEGORI_TRANSAKSI, type JenisTransaksi } from '@/lib/mock';
+import { newId, unggahBerkas, useData, KATEGORI_TRANSAKSI, type JenisTransaksi } from '@/lib/data';
 import { hariIniISO, namaBerkas } from '@/utils/formatters';
 import { ROUTES } from '@/lib/constants/routes';
 
@@ -13,7 +13,7 @@ type Errors = Partial<Record<'tanggal' | 'kategori' | 'nominal' | 'keterangan' |
 
 /** Form catat/ubah transaksi keuangan beserta foto bukti. */
 export const TransaksiForm: React.FC<{ id?: string }> = ({ id }) => {
-  const { db, setDb, user } = useMock();
+  const { db, setDb, user } = useData();
   const router = useRouter();
   const toast = useToast();
   const existing = id ? db.transaksi.find((t) => t.id === id) : undefined;
@@ -136,7 +136,13 @@ export const TransaksiForm: React.FC<{ id?: string }> = ({ id }) => {
               hint="JPG atau PNG · maks. 5 MB"
               typeError="Bukti harus berupa foto (JPG atau PNG)."
               onFile={async (f) => {
-                setBukti(await readAsDataURL(f));
+                setBuktiNama(`Mengunggah ${f.name}…`);
+                const res = await unggahBerkas(f, 'bukti');
+                if (!res.ok) {
+                  setBuktiNama('');
+                  return setErrors((e) => ({ ...e, bukti: res.message }));
+                }
+                setBukti(res.url);
                 setBuktiNama(f.name);
               }}
               onError={(m) => setErrors((e) => ({ ...e, bukti: m || undefined }))}

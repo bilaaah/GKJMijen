@@ -3,9 +3,9 @@
 import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, PageHeader } from '@/components/common';
-import { Field, FileDrop, FormInput, FormTextarea, readAsDataURL } from '@/components/forms';
+import { Field, FileDrop, FormInput, FormTextarea } from '@/components/forms';
 import { EmptyState, useConfirm, useToast } from '@/components/feedback';
-import { newId, useMock } from '@/lib/mock';
+import { newId, unggahBerkas, useData } from '@/lib/data';
 import { formatTanggalPendek } from '@/utils/formatters';
 import { ROUTES } from '@/lib/constants/routes';
 
@@ -13,7 +13,7 @@ type Errors = Partial<Record<'nama_kegiatan' | 'tanggal' | 'jam' | 'lokasi' | 'p
 
 /** Form tambah/ubah kegiatan, termasuk unggah poster/pamflet PNG atau JPG. */
 export const KegiatanForm: React.FC<{ id?: string }> = ({ id }) => {
-  const { db, setDb, user } = useMock();
+  const { db, setDb, user } = useData();
   const router = useRouter();
   const toast = useToast();
   const confirm = useConfirm();
@@ -28,6 +28,17 @@ export const KegiatanForm: React.FC<{ id?: string }> = ({ id }) => {
   const [poster, setPoster] = useState(existing?.url_poster ?? '');
   const [posterNama, setPosterNama] = useState(existing?.url_poster ? `poster-${existing.id}.jpg` : '');
   const [errors, setErrors] = useState<Errors>({});
+
+  const unggahPoster = async (file: File) => {
+    setPosterNama(`Mengunggah ${file.name}…`);
+    const res = await unggahBerkas(file, 'poster');
+    if (!res.ok) {
+      setPosterNama(poster ? posterNama : '');
+      return setErrors((e) => ({ ...e, poster: res.message }));
+    }
+    setPoster(res.url);
+    setPosterNama(file.name);
+  };
   const lokasiList = useMemo(() => Array.from(new Set(db.kegiatan.map((k) => k.lokasi))), [db.kegiatan]);
 
   if (id && !existing) return <EmptyState title="Kegiatan tidak ditemukan" description="Kegiatan mungkin sudah dihapus." />;
@@ -140,10 +151,7 @@ export const KegiatanForm: React.FC<{ id?: string }> = ({ id }) => {
                       title=""
                       hint=""
                       typeError="Poster harus berformat PNG atau JPG."
-                      onFile={async (file) => {
-                        setPoster(await readAsDataURL(file));
-                        setPosterNama(file.name);
-                      }}
+                      onFile={(file) => unggahPoster(file)}
                       onError={(m) => setErrors((e) => ({ ...e, poster: m || undefined }))}
                     />
                   </div>
@@ -158,10 +166,7 @@ export const KegiatanForm: React.FC<{ id?: string }> = ({ id }) => {
                   title="Unggah poster atau pamflet"
                   hint="PNG atau JPG · maks. 5 MB · seret ke sini atau klik untuk memilih"
                   typeError="Poster harus berformat PNG atau JPG."
-                  onFile={async (file) => {
-                    setPoster(await readAsDataURL(file));
-                    setPosterNama(file.name);
-                  }}
+                  onFile={(file) => unggahPoster(file)}
                   onError={(m) => setErrors((e) => ({ ...e, poster: m || undefined }))}
                 />
               )}

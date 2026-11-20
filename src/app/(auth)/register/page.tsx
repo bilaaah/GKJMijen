@@ -6,20 +6,21 @@ import { useRouter } from 'next/navigation';
 import { Button, LogoMark } from '@/components/common';
 import { FormInput, PasswordInput } from '@/components/forms';
 import { Alert, useToast } from '@/components/feedback';
-import { useMock } from '@/lib/mock';
+import { useData } from '@/lib/data';
 import { isValidEmail } from '@/utils/validators';
 import { ROUTES } from '@/lib/constants/routes';
 
-type Errors = Partial<Record<'nama' | 'email' | 'password' | 'password2' | 'setuju', string>>;
+type Errors = Partial<Record<'nama' | 'email' | 'password' | 'password2' | 'setuju' | 'form', string>>;
 
 export default function RegisterPage() {
-  const { register } = useMock();
+  const { register } = useData();
   const router = useRouter();
   const toast = useToast();
   const [f, setF] = useState({ nama: '', email: '', password: '', password2: '', setuju: false });
   const [errors, setErrors] = useState<Errors>({});
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const er: Errors = {};
     if (f.nama.trim().length < 3) er.nama = 'Nama lengkap minimal 3 huruf.';
@@ -29,13 +30,17 @@ export default function RegisterPage() {
     if (!f.password2) er.password2 = 'Ulangi kata sandi.';
     else if (f.password2 !== f.password) er.password2 = 'Konfirmasi kata sandi tidak cocok.';
     if (!f.setuju) er.setuju = 'Centang persetujuan untuk melanjutkan.';
+    let perluKonfirmasi = false;
     if (!er.email && Object.keys(er).length === 0) {
-      const res = register({ nama: f.nama, email: f.email });
-      if (!res.ok) er.email = res.message;
+      setLoading(true);
+      const res = await register({ nama: f.nama, email: f.email, password: f.password });
+      setLoading(false);
+      if (!res.ok) er[res.field] = res.message;
+      else perluKonfirmasi = res.perluKonfirmasi;
     }
     setErrors(er);
     if (Object.keys(er).length) return;
-    toast('Akun berhasil dibuat sebagai Warga. Silakan masuk.');
+    toast(perluKonfirmasi ? 'Akun dibuat sebagai Warga. Buka email Anda dan klik tautan konfirmasi, lalu masuk.' : 'Akun berhasil dibuat sebagai Warga. Silakan masuk.');
     router.push(ROUTES.AUTH.LOGIN);
   };
 
@@ -59,8 +64,9 @@ export default function RegisterPage() {
           </label>
           {errors.setuju && <div className="err">{errors.setuju}</div>}
         </div>
-        <Button type="submit" block>
-          Daftar
+        {errors.form && <Alert tone="bad">{errors.form}</Alert>}
+        <Button type="submit" block disabled={loading}>
+          {loading ? 'Memproses…' : 'Daftar'}
         </Button>
       </form>
       <p className="auth-switch">

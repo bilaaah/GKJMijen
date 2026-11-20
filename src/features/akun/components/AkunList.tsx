@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Badge, Button, IconButton, Modal, PageHeader, Person, SearchInput, Table } from '@/components/common';
 import { Field, FilterSelect, FormInput, FormSelect, RadioPills } from '@/components/forms';
 import { Alert, useConfirm, useToast } from '@/components/feedback';
-import { useMock, type Peran, type Profile } from '@/lib/mock';
+import { useData, type Peran, type Profile } from '@/lib/data';
 import { formatTanggalPendek } from '@/utils/formatters';
 import { routeJemaatDetail } from '@/lib/constants/routes';
 
 const UbahAkunModal: React.FC<{ akun: Profile; onClose: () => void }> = ({ akun, onClose }) => {
-  const { db, setDb, user } = useMock();
+  const { db, setDb, user } = useData();
   const toast = useToast();
   const self = akun.id === user?.id;
   const tertaut = db.jemaat.find((j) => j.id_profiles === akun.id);
@@ -79,7 +79,7 @@ const UbahAkunModal: React.FC<{ akun: Profile; onClose: () => void }> = ({ akun,
 
 /** Daftar akun pengguna: ubah peran dan tautan ke data jemaat. */
 export const AkunList: React.FC = () => {
-  const { db, setDb, user } = useMock();
+  const { db, setDb, user } = useData();
   const router = useRouter();
   const toast = useToast();
   const confirm = useConfirm();

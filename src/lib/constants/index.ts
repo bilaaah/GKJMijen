@@ -8,8 +8,10 @@ export const APP_CONFIG = {
   MAX_UPLOAD_SIZE_MB: 10,
 } as const;
 
+/** Bucket Supabase Storage (dibuat oleh supabase/schema.sql). Logika unggah ada di src/lib/data/files.ts. */
 export const STORAGE_BUCKETS = {
-  DOCUMENTS: process.env.NEXT_PUBLIC_STORAGE_BUCKET_DOCS || 'documents',
-  WARTA: process.env.NEXT_PUBLIC_STORAGE_BUCKET_WARTE || 'warta',
-  AVATARS: process.env.NEXT_PUBLIC_STORAGE_BUCKET_AVATARS || 'avatars',
+  BUKTI_TRANSAKSI: 'bukti-transaksi',
+  LAMPIRAN: 'lampiran',
+  SURAT: 'surat',
+  PUBLIK: 'publik',
 } as const;

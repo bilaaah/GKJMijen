@@ -4,13 +4,13 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, Button, ButtonLink, Card, Icon, PageHeader, YesNoBadge } from '@/components/common';
 import { EmptyState } from '@/components/feedback';
-import { useMock, JENIS_SURAT_LABEL, STATUS_SURAT_LABEL, STATUS_SURAT_TONE } from '@/lib/mock';
+import { useData, JENIS_SURAT_LABEL, STATUS_SURAT_LABEL, STATUS_SURAT_TONE } from '@/lib/data';
 import { formatTanggalPendek, inisial } from '@/utils/formatters';
 import { ROUTES, routeJemaatUbah, routeSuratProses } from '@/lib/constants/routes';
 
 /** Detail satu jemaat beserta data keluarga dan riwayat permohonan surat. */
 export const JemaatDetail: React.FC<{ id: string }> = ({ id }) => {
-  const { db } = useMock();
+  const { db } = useData();
   const router = useRouter();
   const j = db.jemaat.find((x) => x.id === id);
 

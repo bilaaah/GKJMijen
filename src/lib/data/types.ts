@@ -1,7 +1,8 @@
 /**
- * Tipe data sementara untuk tampilan frontend (mode tanpa backend).
- * Mengikuti ERD di laporan perancangan basis data.
- * Saat Supabase siap, tim backend dapat memetakan tipe ini ke tabel asli.
+ * Tipe data yang dipakai seluruh tampilan.
+ * Mengikuti ERD di laporan perancangan basis data. Satu-satunya perbedaan dengan
+ * tabel Supabase: kunci primer selalu bernama `id` di sini (di database
+ * id_jemaat, id_permohonan, dst.). Pemetaannya ada di src/lib/data/mapping.ts.
  */
 
 export type Peran = 'warga' | 'pengurus';
@@ -78,7 +79,7 @@ export interface Warta {
   url_pdf: string;
 }
 
-export interface MockDB {
+export interface DB {
   profiles: Profile[];
   jemaat: Jemaat[];
   surat: PermohonanSurat[];
@@ -86,3 +87,6 @@ export interface MockDB {
   kegiatan: Kegiatan[];
   warta: Warta[];
 }
+
+/** @deprecated nama lama, pakai DB */
+export type MockDB = DB;

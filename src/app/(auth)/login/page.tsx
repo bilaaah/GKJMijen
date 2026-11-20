@@ -6,20 +6,22 @@ import { useRouter } from 'next/navigation';
 import { Button, Icon, LogoMark } from '@/components/common';
 import { FormInput, PasswordInput } from '@/components/forms';
 import { Alert, useToast } from '@/components/feedback';
-import { useMock, DEMO_EMAIL } from '@/lib/mock';
+import { useData, DEMO_EMAIL } from '@/lib/data';
 import { isValidEmail } from '@/utils/validators';
 import { ROUTES } from '@/lib/constants/routes';
 
 export default function LoginPage() {
-  const { login, db } = useMock();
+  const { login, mode } = useData();
   const router = useRouter();
   const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const [alert, setAlert] = useState<'invalid' | 'warga' | null>(null);
+  const [alert, setAlert] = useState<'invalid' | 'warga' | 'unconfirmed' | 'error' | null>(null);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAlert(null);
     const er: typeof errors = {};
@@ -28,10 +30,14 @@ export default function LoginPage() {
     if (!password) er.password = 'Kata sandi wajib diisi.';
     setErrors(er);
     if (Object.keys(er).length) return;
-    const res = login(email, password);
-    if (!res.ok) return setAlert(res.reason);
-    const p = db.profiles.find((x) => x.email.toLowerCase() === email.toLowerCase());
-    toast(`Selamat datang, ${p?.nama ?? ''}.`);
+    setLoading(true);
+    const res = await login(email, password);
+    setLoading(false);
+    if (!res.ok) {
+      setAlertMsg(res.message ?? '');
+      return setAlert(res.reason);
+    }
+    toast(`Selamat datang, ${res.nama}.`);
     router.push(ROUTES.DASHBOARD.ROOT);
   };
 
@@ -51,6 +57,16 @@ export default function LoginPage() {
           Akun ini terdaftar sebagai Warga. Halaman admin hanya dapat dibuka oleh Pengurus Gereja.
         </Alert>
       )}
+      {alert === 'unconfirmed' && (
+        <Alert tone="warn" icon="envelope-exclamation" style={{ marginBottom: 16 }}>
+          Email belum dikonfirmasi. Buka email dari GKJ Mijen (Supabase) dan klik tautan konfirmasi, lalu masuk lagi.
+        </Alert>
+      )}
+      {alert === 'error' && (
+        <Alert tone="bad" style={{ marginBottom: 16 }}>
+          Gagal masuk: {alertMsg || 'terjadi kesalahan. Coba lagi beberapa saat lagi.'}
+        </Alert>
+      )}
       <form className="form-stack" onSubmit={submit} noValidate>
         <FormInput id="email" label="Email" type="email" placeholder="nama@email.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
         <PasswordInput id="password" label="Kata Sandi" placeholder="Masukkan kata sandi" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={errors.password} />
@@ -62,10 +78,11 @@ export default function LoginPage() {
             Lupa kata sandi?
           </Link>
         </div>
-        <Button type="submit" block>
-          Masuk <Icon name="arrow-right" />
+        <Button type="submit" block disabled={loading}>
+          {loading ? 'Memproses…' : 'Masuk'} <Icon name="arrow-right" />
         </Button>
       </form>
+      {mode === 'demo' && (
       <div className="demo-hint">
         <Icon name="info-circle" />
         <div>
@@ -82,6 +99,7 @@ export default function LoginPage() {
           </button>
         </div>
       </div>
+      )}
       <p className="auth-switch">
         Belum punya akun?{' '}
         <Link href={ROUTES.AUTH.REGISTER} className="link">

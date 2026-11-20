@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Card, PageHeader } from '@/components/common';
 import { FormInput, FormSelect, FormTextarea, Switch } from '@/components/forms';
 import { EmptyState, useToast } from '@/components/feedback';
-import { newId, useMock, WILAYAH, type Jemaat } from '@/lib/mock';
+import { newId, useData, WILAYAH, type Jemaat } from '@/lib/data';
 import { ROUTES, routeJemaatDetail } from '@/lib/constants/routes';
 
 type Errors = Partial<Record<'nama' | 'no_hp' | 'wilayah' | 'alamat', string>>;
@@ -14,7 +14,7 @@ const KOSONG: Omit<Jemaat, 'id'> = { nama: '', no_hp: '', alamat: '', wilayah: '
 
 /** Form tambah/ubah data jemaat. */
 export const JemaatForm: React.FC<{ id?: string }> = ({ id }) => {
-  const { db, setDb } = useMock();
+  const { db, setDb } = useData();
   const router = useRouter();
   const toast = useToast();
   const existing = id ? db.jemaat.find((j) => j.id === id) : undefined;

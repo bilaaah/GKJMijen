@@ -3,7 +3,7 @@ import { Cormorant_Garamond, Jost } from 'next/font/google';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './globals.css';
-import { MockProvider } from '@/lib/mock/store';
+import { DataProvider } from '@/lib/data';
 import { ToastProvider, ConfirmProvider } from '@/components/feedback';
 
 const serif = Cormorant_Garamond({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-serif', display: 'swap' });
@@ -18,11 +18,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id" className={`${serif.variable} ${sans.variable}`}>
       <body>
-        <MockProvider>
-          <ToastProvider>
+        <ToastProvider>
+          <DataProvider>
             <ConfirmProvider>{children}</ConfirmProvider>
-          </ToastProvider>
-        </MockProvider>
+          </DataProvider>
+        </ToastProvider>
       </body>
     </html>
   );

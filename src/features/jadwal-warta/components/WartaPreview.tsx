@@ -4,6 +4,7 @@ import React from 'react';
 import { Badge, Button, Icon, Modal } from '@/components/common';
 import { useToast } from '@/components/feedback';
 import { formatTanggalPendek, namaBerkas } from '@/utils/formatters';
+import { bukaBerkas } from '@/lib/data';
 
 /** Pratinjau warta seperti yang akan tampil di landing page. */
 export const WartaPreview: React.FC<{
@@ -49,7 +50,7 @@ export const WartaPreview: React.FC<{
               <b>{namaBerkas(pdf)}</b>
               <small>Warta versi PDF</small>
             </div>
-            <Button size="sm" icon="download" onClick={() => toast(`Mengunduh ${namaBerkas(pdf)}…`, 'info')}>
+            <Button size="sm" icon="download" onClick={() => bukaBerkas(pdf) || toast(`Berkas ${namaBerkas(pdf)} belum tersedia.`, 'info')}>
               Unduh PDF
             </Button>
           </div>

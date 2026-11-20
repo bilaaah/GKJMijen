@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
-import { useMock } from '@/lib/mock/store';
+import { useData } from '@/lib/data';
 import { useToast } from '../feedback/Toast';
 import { LoadingSpinner } from '../feedback/LoadingSpinner';
 import { ROLE_LABELS } from '@/lib/auth/roles';
@@ -12,10 +12,10 @@ import { ROUTES } from '@/lib/constants/routes';
 
 /**
  * Kerangka halaman admin: sidebar burgundy + header + konten.
- * Mode frontend: jika belum login (data contoh), pengguna diarahkan ke /login.
+ * Jika belum login sebagai pengurus, pengguna diarahkan ke /login.
  */
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { ready, user, db, logout } = useMock();
+  const { ready, user, db, logout } = useData();
   const router = useRouter();
   const path = usePathname();
   const toast = useToast();
@@ -49,8 +49,8 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   const menunggu = db.surat.filter((s) => s.status === 'diajukan').length;
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast('Anda telah keluar.', 'info');
     router.push(ROUTES.AUTH.LOGIN);
   };

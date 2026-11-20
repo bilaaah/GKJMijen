@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Badge, Button, ButtonLink, IconButton, Modal, PageHeader, StatCard, Table } from '@/components/common';
 import { FilterSelect } from '@/components/forms';
 import { useConfirm, useToast } from '@/components/feedback';
-import { useMock, KATEGORI_TRANSAKSI, type TransaksiKeuangan } from '@/lib/mock';
+import { bukaBerkas, isPdf, useData, KATEGORI_TRANSAKSI, type TransaksiKeuangan } from '@/lib/data';
 import { formatRp, formatTanggalPendek, hariIniISO, NAMA_BULAN, namaBerkas, parseTanggal } from '@/utils/formatters';
 import { ROUTES, routeTransaksiUbah } from '@/lib/constants/routes';
 
 /** Modul Keuangan – daftar transaksi, ringkasan saldo, dan filter periode. */
 export const KeuanganList: React.FC = () => {
-  const { db, setDb } = useMock();
+  const { db, setDb } = useData();
   const router = useRouter();
   const toast = useToast();
   const confirm = useConfirm();
@@ -136,12 +136,19 @@ export const KeuanganList: React.FC = () => {
         title="Bukti Transaksi"
         subtitle={bukti ? `${bukti.keterangan} · ${formatTanggalPendek(bukti.tanggal)}` : ''}
         footer={
-          <Button variant="outline" onClick={() => setBukti(null)}>
-            Tutup
-          </Button>
+          <>
+            {bukti && /^https?:/.test(bukti.bukti_url) && (
+              <Button variant="outline" icon="box-arrow-up-right" onClick={() => bukaBerkas(bukti.bukti_url)}>
+                Buka
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => setBukti(null)}>
+              Tutup
+            </Button>
+          </>
         }
       >
-        {bukti?.bukti_url.startsWith('data:') ? (
+        {bukti && /^(data:image|https?:)/.test(bukti.bukti_url) && !isPdf(bukti.bukti_url) ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={bukti.bukti_url} alt="Bukti transaksi" style={{ maxWidth: '100%', borderRadius: 12, display: 'block', margin: 'auto' }} />
         ) : (

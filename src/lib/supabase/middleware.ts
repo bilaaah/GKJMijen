@@ -1,5 +1,9 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
+
+/** Halaman yang boleh dibuka tanpa login. */
+const HALAMAN_PUBLIK = ['/login', '/register', '/forgot-password', '/reset-password'];
 
 interface CookieToSet {
   name: string;
@@ -17,8 +21,8 @@ export async function updateSession(request: NextRequest) {
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -42,21 +46,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthPage =
-    request.nextUrl.pathname.startsWith('/login') ||
-    request.nextUrl.pathname.startsWith('/forgot-password');
+  const path = request.nextUrl.pathname;
+  const isPublik = path === '/' || HALAMAN_PUBLIK.some((p) => path.startsWith(p));
 
-  // Proteksi route internal jika user belum terautentikasi
-  if (!user && !isAuthPage && request.nextUrl.pathname !== '/') {
+  // Proteksi route internal jika user belum terautentikasi.
+  // Pemeriksaan peran (hanya pengurus) dilakukan di AppShell + Row Level Security database.
+  if (!user && !isPublik) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
-
-  // Jika sudah login tapi mengakses halaman auth
-  if (user && isAuthPage) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 

@@ -4,14 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Badge, ButtonLink, Card, Icon, LogoMark, StatCard } from '@/components/common';
-import { useMock, JENIS_SURAT_LABEL, STATUS_SURAT_LABEL, STATUS_SURAT_TONE } from '@/lib/mock';
+import { useData, JENIS_SURAT_LABEL, STATUS_SURAT_LABEL, STATUS_SURAT_TONE } from '@/lib/data';
 import { formatHariTanggal, formatJam, formatRp, formatTanggalPendek, hariIniISO, NAMA_BULAN, NAMA_HARI, parseTanggal } from '@/utils/formatters';
 import { ROUTES, routeKegiatanUbah, routeSuratProses } from '@/lib/constants/routes';
 
 const byDateTime = (a: { tanggal: string; jam: string }, b: { tanggal: string; jam: string }) => (a.tanggal + a.jam).localeCompare(b.tanggal + b.jam);
 
 export const DashboardOverview: React.FC = () => {
-  const { db, user } = useMock();
+  const { db, user } = useData();
   const router = useRouter();
   const today = hariIniISO();
   const now = parseTanggal(today);

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Badge, Button, ButtonLink, Card, Icon, IconButton, PageHeader } from '@/components/common';
 import { FileDrop, FormInput } from '@/components/forms';
 import { Alert, EmptyState, useToast } from '@/components/feedback';
-import { newId, useMock, type StatusWarta } from '@/lib/mock';
+import { newId, unggahBerkas, useData, type StatusWarta } from '@/lib/data';
 import { hariIniISO, namaBerkas } from '@/utils/formatters';
 import { ROUTES } from '@/lib/constants/routes';
 import { WartaPreview } from './WartaPreview';
@@ -21,7 +21,7 @@ const TOOLBAR: { icon: string; label: string; cmd: string; arg?: string }[] = [
 
 /** Editor warta: judul, isi (rich text), lampiran PDF, simpan draf / terbitkan. */
 export const WartaEditor: React.FC<{ id?: string }> = ({ id }) => {
-  const { db, setDb, user } = useMock();
+  const { db, setDb, user } = useData();
   const router = useRouter();
   const toast = useToast();
   const existing = id ? db.warta.find((w) => w.id === id) : undefined;
@@ -29,10 +29,20 @@ export const WartaEditor: React.FC<{ id?: string }> = ({ id }) => {
   const [judul, setJudul] = useState(existing?.judul ?? '');
   const [tanggal, setTanggal] = useState(existing?.tanggal_terbit ?? '');
   const [pdf, setPdf] = useState(existing?.url_pdf ?? '');
-  const [pdfSize, setPdfSize] = useState(existing?.url_pdf ? '386 KB' : '');
+  const [pdfSize, setPdfSize] = useState('');
   const [errors, setErrors] = useState<{ judul?: string; isi?: string; pdf?: string }>({});
   const [preview, setPreview] = useState(false);
   const [initialIsi] = useState(existing?.isi ?? '');
+  const [mengunggah, setMengunggah] = useState(false);
+
+  const unggahPdf = async (f: File) => {
+    setMengunggah(true);
+    const res = await unggahBerkas(f, 'warta');
+    setMengunggah(false);
+    if (!res.ok) return setErrors((e) => ({ ...e, pdf: res.message }));
+    setPdf(res.url);
+    setPdfSize(`${Math.round(f.size / 1024)} KB`);
+  };
 
   if (id && !existing)
     return (
@@ -135,10 +145,7 @@ export const WartaEditor: React.FC<{ id?: string }> = ({ id }) => {
                   title=""
                   hint=""
                   typeError="Lampiran warta harus berformat PDF."
-                  onFile={(f) => {
-                    setPdf(`warta/${f.name}`);
-                    setPdfSize(`${Math.round(f.size / 1024)} KB`);
-                  }}
+                  onFile={(f) => unggahPdf(f)}
                   onError={(m) => setErrors((e) => ({ ...e, pdf: m || undefined }))}
                 />
               </div>
@@ -153,13 +160,11 @@ export const WartaEditor: React.FC<{ id?: string }> = ({ id }) => {
               title="Unggah warta versi PDF"
               hint="Opsional · PDF maks. 10 MB · seret ke sini atau klik untuk memilih"
               typeError="Lampiran warta harus berformat PDF."
-              onFile={(f) => {
-                setPdf(`warta/${f.name}`);
-                setPdfSize(`${Math.round(f.size / 1024)} KB`);
-              }}
+              onFile={(f) => unggahPdf(f)}
               onError={(m) => setErrors((e) => ({ ...e, pdf: m || undefined }))}
             />
           )}
+          {mengunggah && <small className="muted">Mengunggah PDF…</small>}
           {errors.pdf && (
             <div className="err" style={{ marginTop: 6 }}>
               {errors.pdf}

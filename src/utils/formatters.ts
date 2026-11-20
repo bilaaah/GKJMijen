@@ -84,7 +84,17 @@ export function inisial(nama: string): string {
 
 /** Ambil nama berkas dari path/URL. */
 export function namaBerkas(path: string): string {
-  return path ? path.split('/').pop() ?? path : '';
+  if (!path) return '';
+  if (path.startsWith('data:')) return 'berkas-terunggah';
+  const nama = path.split('?')[0].split('#')[0].split('/').pop() ?? path;
+  let bersih = nama;
+  try {
+    bersih = decodeURIComponent(nama);
+  } catch {
+    /* biarkan apa adanya */
+  }
+  // Berkas di Supabase Storage diberi awalan cap waktu, mis. 1763620000000-nota.jpg
+  return bersih.replace(/^\d{13}-/, '');
 }
 
 export function formatPhoneNumber(phone: string): string {

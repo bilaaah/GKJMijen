@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button, ButtonLink, Card, Icon, IconButton, Modal, PageHeader, Person, YesNoBadge } from '@/components/common';
 import { Field, FileDrop, FormInput, FormTextarea, RadioPills } from '@/components/forms';
 import { Alert, EmptyState, useToast } from '@/components/feedback';
-import { useMock, JENIS_SURAT_KODE, JENIS_SURAT_LABEL, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type PermohonanSurat, type StatusSurat } from '@/lib/mock';
+import { bukaBerkas, unggahBerkas, useData, JENIS_SURAT_KODE, JENIS_SURAT_LABEL, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type PermohonanSurat, type StatusSurat } from '@/lib/data';
 import { formatHariTanggal, formatTanggalPendek, namaBerkas } from '@/utils/formatters';
 import { ROUTES, routeJemaatDetail } from '@/lib/constants/routes';
 
@@ -36,7 +36,7 @@ const Timeline: React.FC<{ s: PermohonanSurat }> = ({ s }) => {
 
 /** Halaman memproses satu permohonan surat: ubah status, nomor surat, unggah PDF, catatan. */
 export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
-  const { db, setDb, user } = useMock();
+  const { db, setDb, user } = useData();
   const router = useRouter();
   const toast = useToast();
   const s = db.surat.find((x) => x.id === id);
@@ -44,6 +44,8 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
   const [nomor, setNomor] = useState(s?.nomor_surat ?? '');
   const [catatan, setCatatan] = useState(s?.catatan ?? '');
   const [fileBaru, setFileBaru] = useState('');
+  const [urlBaru, setUrlBaru] = useState('');
+  const [mengunggah, setMengunggah] = useState(false);
   const [errors, setErrors] = useState<{ nomor?: string; file?: string; catatan?: string }>({});
   const [preview, setPreview] = useState<'lampiran' | 'surat' | null>(null);
 
@@ -74,7 +76,7 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
     setDb((d) => ({
       ...d,
       surat: d.surat.map((x) =>
-        x.id === s.id ? { ...x, status, nomor_surat: nomor.trim(), catatan: catatan.trim(), id_pengurus: user?.id ?? x.id_pengurus, url_surat: fileBaru ? `surat-final/${fileBaru}` : x.url_surat } : x
+        x.id === s.id ? { ...x, status, nomor_surat: nomor.trim(), catatan: catatan.trim(), id_pengurus: user?.id ?? x.id_pengurus, url_surat: urlBaru || x.url_surat } : x
       ),
     }));
     toast(`Permohonan ${j?.nama ?? ''} kini berstatus ${STATUS_SURAT_LABEL[status]}.`);
@@ -151,7 +153,7 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
                 <Button size="sm" variant="ghost" icon="eye" onClick={() => setPreview('lampiran')}>
                   Pratinjau
                 </Button>
-                <IconButton icon="download" label="Unduh lampiran" onClick={() => toast(`Mengunduh ${namaBerkas(s.url_lampiran)}…`, 'info')} />
+                <IconButton icon="download" label="Unduh lampiran" onClick={() => bukaBerkas(s.url_lampiran) || toast(`Berkas ${namaBerkas(s.url_lampiran) || 'lampiran'} belum tersedia.`, 'info')} />
               </div>
             </div>
             {s.url_surat && (
@@ -205,7 +207,7 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
                   </span>
                   <div className="ft">
                     <b>{fileSurat}</b>
-                    <small>{fileBaru ? 'Berkas baru, tersimpan setelah Simpan' : 'Surat final saat ini'}</small>
+                    <small>{fileBaru ? 'Berkas baru sudah terunggah, tersimpan setelah Simpan' : 'Surat final saat ini'}</small>
                   </div>
                 </div>
               )}
@@ -218,7 +220,15 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
                 title={fileSurat ? 'Ganti dengan berkas PDF lain' : 'Seret berkas PDF ke sini'}
                 hint="atau klik untuk memilih berkas · maks. 5 MB"
                 typeError="Berkas harus berformat PDF."
-                onFile={(f) => setFileBaru(f.name)}
+                onFile={async (f) => {
+                  setMengunggah(true);
+                  // Disimpan di folder milik akun warga pemohon, supaya warga bisa mengunduh suratnya sendiri
+                  const res = await unggahBerkas(f, 'surat', j?.id_profiles ?? undefined);
+                  setMengunggah(false);
+                  if (!res.ok) return setErrors((e) => ({ ...e, file: res.message }));
+                  setUrlBaru(res.url);
+                  setFileBaru(f.name);
+                }}
                 onError={(m) => setErrors((e) => ({ ...e, file: m || undefined }))}
               />
             </Field>
@@ -233,7 +243,8 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
               error={errors.catatan}
             />
             <Alert>Persetujuan pendeta atau majelis dilakukan sebelum status diubah menjadi Selesai.</Alert>
-            <Button type="submit" icon="check-lg" block>
+            {mengunggah && <small className="muted">Mengunggah surat…</small>}
+            <Button type="submit" icon="check-lg" block disabled={mengunggah}>
               Simpan Perubahan
             </Button>
           </form>
@@ -251,7 +262,7 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
             <Button variant="outline" onClick={() => setPreview(null)}>
               Tutup
             </Button>
-            <Button icon="download" onClick={() => toast('Mengunduh berkas…', 'info')}>
+            <Button icon="download" onClick={() => bukaBerkas(preview === 'surat' ? s.url_surat : s.url_lampiran) || toast('Berkas belum tersedia.', 'info')}>
               Unduh
             </Button>
           </>

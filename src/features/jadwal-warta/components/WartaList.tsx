@@ -4,14 +4,14 @@ import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, ButtonLink, IconButton, PageHeader, SearchInput, StatusTabs, Table } from '@/components/common';
 import { useConfirm, useToast } from '@/components/feedback';
-import { useMock, type StatusWarta, type Warta } from '@/lib/mock';
+import { useData, type StatusWarta, type Warta } from '@/lib/data';
 import { formatTanggalPendek, hariIniISO, namaBerkas } from '@/utils/formatters';
 import { ROUTES, routeWartaUbah } from '@/lib/constants/routes';
 import { WartaPreview } from './WartaPreview';
 
 /** Daftar warta (draf dan terbit). */
 export const WartaList: React.FC = () => {
-  const { db, setDb } = useMock();
+  const { db, setDb } = useData();
   const router = useRouter();
   const toast = useToast();
   const confirm = useConfirm();

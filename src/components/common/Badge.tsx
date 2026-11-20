@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Tone } from '@/lib/mock/constants';
+import type { Tone } from '@/lib/data/constants';
 
 export interface BadgeProps {
   tone?: Tone;

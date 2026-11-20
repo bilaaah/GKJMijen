@@ -4,13 +4,13 @@ import React, { useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Badge, Button, PageHeader, Person, SearchInput, StatusTabs, Table } from '@/components/common';
 import { FilterSelect } from '@/components/forms';
-import { useMock, JENIS_SURAT_LABEL, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type PermohonanSurat, type StatusSurat } from '@/lib/mock';
+import { useData, JENIS_SURAT_LABEL, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type PermohonanSurat, type StatusSurat } from '@/lib/data';
 import { formatTanggalPendek } from '@/utils/formatters';
 import { routeSuratProses } from '@/lib/constants/routes';
 
 /** Modul Layanan Surat – daftar permohonan dengan tab status dan filter. */
 export const SuratList: React.FC = () => {
-  const { db } = useMock();
+  const { db } = useData();
   const router = useRouter();
   const params = useSearchParams();
   const initial = params.get('status');

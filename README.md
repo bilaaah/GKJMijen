@@ -143,18 +143,16 @@ Salin file `.env.example` menjadi `.env.local`:
 cp .env.example .env.local
 ```
 
-Isi variabel konfigurasi di `.env.local` sesuai dengan project Supabase Anda:
+Isi dua variabel berikut sesuai project Supabase (Project Settings → API Keys):
 
 ```env
-# URL Instance Supabase
-NEXT_PUBLIC_SUPABASE_URL="https://your-project-id.supabase.co"
-
-# Public Anon Key (Aman di sisi browser, dibatasi oleh RLS)
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key-here"
-
-# Service Role Secret Key (Hanya untuk server/backend, jangan diakses di browser)
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key-here"
+NEXT_PUBLIC_SUPABASE_URL="https://xxxx.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="sb_publishable_..."   # publishable key, aman di browser (dibatasi RLS)
 ```
+
+- **Jangan** memakai secret / service_role key, dan **jangan** commit `.env.local`.
+- Jika `.env.local` belum diisi, aplikasi berjalan dalam **mode demo** dengan data contoh.
+- Skema database, data contoh, dan penjelasan backend lengkap: lihat [`docs/backend.md`](docs/backend.md).
 
 ---
 

@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation';
 import { ButtonLink, Icon, IconButton, PageHeader, Person, SearchInput, Table, YesNoBadge } from '@/components/common';
 import { FilterSelect } from '@/components/forms';
 import { Alert, useConfirm, useToast } from '@/components/feedback';
-import { useMock, WILAYAH, type Jemaat } from '@/lib/mock';
+import { useData, WILAYAH, type Jemaat } from '@/lib/data';
 import { ROUTES, routeJemaatDetail, routeJemaatUbah } from '@/lib/constants/routes';
 
 /**
  * Modul Data Jemaat – daftar jemaat dengan pencarian dan filter.
- * Mode frontend: data dari useMock(); hapus data langsung di memori.
+ * Mode frontend: data dari useData(); hapus data langsung di memori.
  */
 export const JemaatList: React.FC = () => {
-  const { db, setDb } = useMock();
+  const { db, setDb } = useData();
   const router = useRouter();
   const toast = useToast();
   const confirm = useConfirm();

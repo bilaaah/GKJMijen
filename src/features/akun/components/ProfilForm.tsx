@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import { Button, Card, PageHeader } from '@/components/common';
 import { FormInput, PasswordInput } from '@/components/forms';
 import { useToast } from '@/components/feedback';
-import { useMock } from '@/lib/mock';
+import { useData } from '@/lib/data';
 import { ROLE_LABELS } from '@/lib/auth/roles';
 import { formatTanggalPendek, inisial } from '@/utils/formatters';
 
 /** Profil pengguna yang sedang login: ubah nama dan kata sandi. */
 export const ProfilForm: React.FC = () => {
-  const { db, user, updateUser } = useMock();
+  const { db, user, updateUser } = useData();
   const toast = useToast();
   const [nama, setNama] = useState(user?.nama ?? '');
   const [namaErr, setNamaErr] = useState('');

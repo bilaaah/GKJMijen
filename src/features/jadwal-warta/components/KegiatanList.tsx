@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Badge, Button, ButtonLink, IconButton, Modal, PageHeader, SearchInput, Table } from '@/components/common';
 import { Segmented } from '@/components/forms';
 import { Alert, useConfirm, useToast } from '@/components/feedback';
-import { useMock, type Kegiatan } from '@/lib/mock';
+import { useData, type Kegiatan } from '@/lib/data';
 import { formatHariTanggal, formatJam, formatTanggalPendek, hariIniISO, NAMA_BULAN, NAMA_HARI, parseTanggal } from '@/utils/formatters';
 import { ROUTES, routeKegiatanUbah } from '@/lib/constants/routes';
 
@@ -91,7 +91,7 @@ const Kalender: React.FC<{ kegiatan: Kegiatan[]; today: string; onOpen: (k: Kegi
 
 /** Modul Jadwal & Warta – daftar kegiatan (tabel atau kalender). */
 export const KegiatanList: React.FC = () => {
-  const { db, setDb } = useMock();
+  const { db, setDb } = useData();
   const router = useRouter();
   const params = useSearchParams();
   const toast = useToast();

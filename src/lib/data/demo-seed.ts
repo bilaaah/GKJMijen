@@ -1,9 +1,9 @@
-import type { MockDB } from './types';
+import type { DB } from './types';
 import { WILAYAH } from './constants';
 
 /**
- * Data contoh untuk mode frontend tanpa backend.
- * TODO [Backend]: hapus file ini setelah data diambil dari Supabase.
+ * Data contoh untuk MODE DEMO (dipakai saat kunci Supabase belum diisi di .env.local).
+ * Saat Supabase aktif, data diambil dari database dan file ini tidak dipakai.
  */
 
 function samplePoster(eyebrow: string, title: string[], when: string, where: string, bg: string, fg: string): string {
@@ -15,7 +15,7 @@ function samplePoster(eyebrow: string, title: string[], when: string, where: str
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 
-export const SEED: MockDB = {
+export const SEED: DB = {
   profiles: [
     { id: 'p1', nama: 'Yohanes Prasetyo', email: 'yohanes.prasetyo@gkjmijen.or.id', peran: 'pengurus', created_at: '2026-08-03' },
     { id: 'p2', nama: 'Ruth Wulandari', email: 'ruth.wulandari@gkjmijen.or.id', peran: 'pengurus', created_at: '2026-08-03' },
