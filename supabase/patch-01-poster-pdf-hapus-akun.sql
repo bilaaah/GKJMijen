@@ -9,6 +9,7 @@
 
 alter table kegiatan add column if not exists url_poster text;
 alter table warta    add column if not exists url_pdf text;
+alter table permohonan_surat add column if not exists keterangan text;
 
 insert into storage.buckets (id, name, public)
 values ('publik', 'publik', true)
@@ -40,7 +41,7 @@ grant execute on function hapus_akun(uuid) to authenticated;
 --    Project Supabase baru tidak otomatis memberi izin tabel ke aplikasi.
 --    Tanpa ini login gagal walau peran sudah 'pengurus'. RLS tetap berlaku.
 -- ---------------------------------------------------------------------
-grant usage on schema public to anon, authenticated;
-grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage on schema public to anon, authenticated, service_role;
+grant select, insert, update, delete on all tables in schema public to authenticated, service_role;
 grant select on kegiatan, warta to anon;
-grant execute on all functions in schema public to authenticated;
+grant execute on all functions in schema public to authenticated, service_role;

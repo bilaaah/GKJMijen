@@ -5,7 +5,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="auth">
       <aside className="auth-art">
-        <Logo href="/login" />
+        <Logo href="/" />
         <div className="auth-stage">
           <div className="arch-wrap">
             <div className="arch">

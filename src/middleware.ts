@@ -20,7 +20,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public files (images, docs, dll)
+     * - api/siaran (daftar siaran YouTube untuk landing page publik)
      */
-    '/((?!_next/static|_next/image|favicon.ico|images|docs|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|images|docs|api/siaran|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

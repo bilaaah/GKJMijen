@@ -46,6 +46,7 @@ create table permohonan_surat (
                      check (status in ('diajukan','diproses','selesai','ditolak')),
   catatan            text,
   nomor_surat        text,
+  keterangan         text,   -- isian form permohonan dari warga
   url_lampiran       text,   -- path berkas di bucket "lampiran"
   url_surat          text,   -- path berkas di bucket "surat"
   created_at         timestamptz not null default now(),
@@ -330,10 +331,10 @@ grant execute on function hapus_akun(uuid) to authenticated;
 --    Project Supabase baru tidak otomatis memberi izin tabel ke aplikasi.
 --    Tanpa ini login gagal walau peran sudah 'pengurus'. RLS tetap berlaku.
 -- ---------------------------------------------------------------------
-grant usage on schema public to anon, authenticated;
-grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage on schema public to anon, authenticated, service_role;
+grant select, insert, update, delete on all tables in schema public to authenticated, service_role;
 grant select on kegiatan, warta to anon;
-grant execute on all functions in schema public to authenticated;
+grant execute on all functions in schema public to authenticated, service_role;
 
 
 -- ---------------------------------------------------------------------

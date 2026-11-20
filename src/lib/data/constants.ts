@@ -35,3 +35,4 @@ export const STATUS_SURAT_TONE: Record<StatusSurat, Tone> = {
 };
 
 export const DEMO_EMAIL = 'yohanes.prasetyo@gkjmijen.or.id';
+export const DEMO_WARGA_EMAIL = 'bambang.sutrisno@gmail.com';

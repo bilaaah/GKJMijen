@@ -88,13 +88,14 @@ export async function tandatanganiBerkas(db: DB): Promise<DB> {
   return salin;
 }
 
-export type TujuanUnggah = 'bukti' | 'poster' | 'warta' | 'surat';
+export type TujuanUnggah = 'bukti' | 'poster' | 'warta' | 'surat' | 'lampiran';
 
 const TUJUAN: Record<TujuanUnggah, InfoBerkas & { folder: string }> = {
   bukti: { bucket: 'bukti-transaksi', privat: true, folder: 'transaksi' },
   poster: { bucket: 'publik', privat: false, folder: 'poster' },
   warta: { bucket: 'publik', privat: false, folder: 'warta' },
   surat: { bucket: 'surat', privat: true, folder: 'umum' },
+  lampiran: { bucket: 'lampiran', privat: true, folder: 'lampiran' },
 };
 
 function namaAman(nama: string): string {

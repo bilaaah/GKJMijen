@@ -83,6 +83,7 @@ export function suratDariDb(r: Row): PermohonanSurat {
     nomor_surat: s(r.nomor_surat),
     url_lampiran: s(r.url_lampiran),
     url_surat: s(r.url_surat),
+    keterangan: s(r.keterangan),
   };
 }
 

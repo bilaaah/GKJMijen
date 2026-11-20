@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Icon, LogoMark } from '@/components/common';
 import { FormInput, PasswordInput } from '@/components/forms';
 import { Alert, useToast } from '@/components/feedback';
-import { useData, DEMO_EMAIL } from '@/lib/data';
+import { useData, DEMO_EMAIL, DEMO_WARGA_EMAIL } from '@/lib/data';
 import { isValidEmail } from '@/utils/validators';
 import { ROUTES } from '@/lib/constants/routes';
 
@@ -38,7 +38,10 @@ export default function LoginPage() {
       return setAlert(res.reason);
     }
     toast(`Selamat datang, ${res.nama}.`);
-    router.push(ROUTES.DASHBOARD.ROOT);
+    // Warga ke portal jemaat, pengurus ke panel admin. ?next= dipakai bila login dipicu dari halaman lain.
+    const next = new URLSearchParams(window.location.search).get('next');
+    if (res.peran === 'warga') router.push(next?.startsWith(ROUTES.PORTAL.ROOT) ? next : ROUTES.PORTAL.ROOT);
+    else router.push(ROUTES.DASHBOARD.ROOT);
   };
 
   return (
@@ -83,22 +86,34 @@ export default function LoginPage() {
         </Button>
       </form>
       {mode === 'demo' && (
-      <div className="demo-hint">
-        <Icon name="info-circle" />
-        <div>
-          Akun demo pengurus: <b>{DEMO_EMAIL}</b> dengan kata sandi apa saja (minimal 8 karakter).{' '}
-          <button
-            type="button"
-            className="link"
-            onClick={() => {
-              setEmail(DEMO_EMAIL);
-              setPassword('kasih2026');
-            }}
-          >
-            Isi otomatis
-          </button>
+        <div className="demo-hint">
+          <Icon name="info-circle" />
+          <div>
+            Akun demo pengurus: <b>{DEMO_EMAIL}</b> dengan kata sandi apa saja (minimal 8 karakter).{' '}
+            <button
+              type="button"
+              className="link"
+              onClick={() => {
+                setEmail(DEMO_EMAIL);
+                setPassword('kasih2026');
+              }}
+            >
+              Isi otomatis
+            </button>
+            <br />
+            Akun demo warga: <b>{DEMO_WARGA_EMAIL}</b>.{' '}
+            <button
+              type="button"
+              className="link"
+              onClick={() => {
+                setEmail(DEMO_WARGA_EMAIL);
+                setPassword('kasih2026');
+              }}
+            >
+              Isi otomatis
+            </button>
+          </div>
         </div>
-      </div>
       )}
       <p className="auth-switch">
         Belum punya akun?{' '}

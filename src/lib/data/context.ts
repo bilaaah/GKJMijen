@@ -1,9 +1,9 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { DB, Profile } from './types';
+import type { DB, Profile, Peran } from './types';
 
-export type LoginResult = { ok: true; nama: string } | { ok: false; reason: 'invalid' | 'warga' | 'unconfirmed' | 'error'; message?: string };
+export type LoginResult = { ok: true; nama: string; peran: Peran } | { ok: false; reason: 'invalid' | 'warga' | 'unconfirmed' | 'error'; message?: string };
 export type RegisterResult = { ok: true; perluKonfirmasi: boolean } | { ok: false; field: 'email' | 'form'; message: string };
 export type SimpleResult = { ok: true } | { ok: false; message: string };
 

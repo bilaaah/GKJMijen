@@ -57,7 +57,17 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
       data: { user: authUser },
     } = await sb.auth.getUser();
     if (!authUser) {
-      pasangDb(DB_KOSONG);
+      // Pengunjung publik (belum login) dapat melihat jadwal kegiatan dan warta terbit
+      const [kegiatan, warta] = await Promise.all([
+        sb.from('kegiatan').select('*').order('tanggal'),
+        sb.from('warta').select('*').eq('status', 'terbit').order('created_at', { ascending: false }),
+      ]);
+      const baru: DB = {
+        ...DB_KOSONG,
+        kegiatan: (kegiatan.data ?? []).map(kegiatanDariDb),
+        warta: (warta.data ?? []).map(wartaDariDb),
+      };
+      pasangDb(baru);
       setUserId(null);
       return null;
     }
@@ -65,10 +75,30 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
     const { data: me, error: errProfil } = await sb.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
     if (errProfil) throw errProfil;
     const profil = me ? profileDariDb(me) : null;
-    if (!profil || profil.peran !== 'pengurus') {
-      // Panel admin hanya untuk pengurus; warga tidak memuat data apa pun di sini.
+    if (!profil) {
       pasangDb(DB_KOSONG);
       setUserId(null);
+      return null;
+    }
+
+    if (profil.peran === 'warga') {
+      // Warga jemaat: profil pribadi, data jemaat tertaut, permohonan surat miliknya, kegiatan & warta terbit
+      const [jemaat, surat, kegiatan, warta] = await Promise.all([
+        sb.from('jemaat').select('*').eq('id_profiles', authUser.id).order('nama'),
+        sb.from('permohonan_surat').select('*').order('tanggal_pengajuan', { ascending: false }),
+        sb.from('kegiatan').select('*').order('tanggal'),
+        sb.from('warta').select('*').eq('status', 'terbit').order('created_at', { ascending: false }),
+      ]);
+      const baru: DB = {
+        profiles: [profil],
+        jemaat: (jemaat.data ?? []).map(jemaatDariDb),
+        surat: (surat.data ?? []).map(suratDariDb),
+        transaksi: [],
+        kegiatan: (kegiatan.data ?? []).map(kegiatanDariDb),
+        warta: (warta.data ?? []).map(wartaDariDb),
+      };
+      pasangDb(await tandatanganiBerkas(baru));
+      setUserId(profil.id);
       return profil;
     }
 
@@ -152,11 +182,7 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
         await sb.auth.signOut();
         return { ok: false, reason: 'error', message: 'akun ini belum punya baris di tabel profiles.' };
       }
-      if (profil.peran !== 'pengurus') {
-        await sb.auth.signOut();
-        return { ok: false, reason: 'warga' };
-      }
-      return { ok: true, nama: profil.nama };
+      return { ok: true, nama: profil.nama, peran: profil.peran };
     },
     [sb, muat]
   );
