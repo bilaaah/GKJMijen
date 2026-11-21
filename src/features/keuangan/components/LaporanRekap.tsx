@@ -6,11 +6,13 @@ import { FilterSelect } from '@/components/forms';
 import { useToast } from '@/components/feedback';
 import { useData, KATEGORI_TRANSAKSI, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type JenisTransaksi } from '@/lib/data';
 import { formatRp, hariIniISO, NAMA_BULAN } from '@/utils/formatters';
+import { cetakPdf, eksporExcel, type DataRekap } from '../ekspor';
 
 /** Laporan & rekap kas bulanan (dihitung otomatis dari transaksi). */
 export const LaporanRekap: React.FC = () => {
-  const { db } = useData();
+  const { db, user } = useData();
   const toast = useToast();
+  const [proses, setProses] = useState<'pdf' | 'excel' | null>(null);
   const today = hariIniISO();
   const [bulan, setBulan] = useState(String(Number(today.slice(5, 7))));
   const [tahun, setTahun] = useState(today.slice(0, 4));
@@ -32,6 +34,33 @@ export const LaporanRekap: React.FC = () => {
   const tout = pout.reduce((s, [, v]) => s + v, 0);
   const akhir = awal + tin - tout;
   const surat = db.surat.filter((s) => s.tanggal_pengajuan.startsWith(ym));
+  const dataRekap = (): DataRekap => ({
+    periode,
+    labelSaldoAwal: `Saldo awal (1 ${NAMA_BULAN[m - 1]} ${y})`,
+    labelSaldoAkhir: `Saldo akhir (${lastDay} ${NAMA_BULAN[m - 1]} ${y})`,
+    awal,
+    pemasukan: pin,
+    pengeluaran: pout,
+    totalMasuk: tin,
+    totalKeluar: tout,
+    akhir,
+    transaksi: [...tr].sort((a, b) => a.tanggal.localeCompare(b.tanggal)),
+    surat: STATUS_SURAT.map((st) => [STATUS_SURAT_LABEL[st], surat.filter((x) => x.status === st).length]),
+    dicetakOleh: user?.nama || 'Pengurus',
+  });
+
+  const ekspor = async (jenis: 'pdf' | 'excel') => {
+    setProses(jenis);
+    try {
+      await (jenis === 'pdf' ? cetakPdf(dataRekap()) : eksporExcel(dataRekap()));
+      toast(`Rekap ${periode} berhasil diunduh sebagai ${jenis === 'pdf' ? 'PDF' : 'Excel'}.`);
+    } catch (e) {
+      toast(`Gagal membuat berkas: ${e instanceof Error ? e.message : String(e)}`, 'bad');
+    } finally {
+      setProses(null);
+    }
+  };
+
   const tahunOpsi = Array.from(new Set([today.slice(0, 4), ...db.transaksi.map((t) => t.tanggal.slice(0, 4))])).sort().reverse();
 
   return (
@@ -42,11 +71,11 @@ export const LaporanRekap: React.FC = () => {
         description="Rekap bulanan dihitung otomatis dari transaksi yang tercatat dan dapat dicetak atau diekspor."
         actions={
           <>
-            <Button variant="outline" icon="printer" onClick={() => toast(`Rekap ${periode} disiapkan sebagai PDF. Unduhan aktif setelah backend tersambung.`, 'info')}>
-              Cetak PDF
+            <Button variant="outline" icon="printer" disabled={!!proses} onClick={() => ekspor('pdf')}>
+              {proses === 'pdf' ? 'Menyiapkan PDF…' : 'Cetak PDF'}
             </Button>
-            <Button icon="file-earmark-spreadsheet" onClick={() => toast(`Rekap ${periode} diekspor ke Excel. Unduhan aktif setelah backend tersambung.`, 'info')}>
-              Ekspor Excel
+            <Button icon="file-earmark-spreadsheet" disabled={!!proses} onClick={() => ekspor('excel')}>
+              {proses === 'excel' ? 'Menyiapkan Excel…' : 'Ekspor Excel'}
             </Button>
           </>
         }

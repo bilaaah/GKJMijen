@@ -181,6 +181,29 @@ create trigger trg_warta_terbit
   for each row execute function set_tanggal_terbit();
 
 
+-- 2.6 Warga hanya boleh mengubah data kontak miliknya (no HP, alamat, data keluarga)
+create or replace function kunci_data_jemaat() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is not null and not is_pengurus() then
+    if new.status_baptis is distinct from old.status_baptis
+       or new.status_sidi is distinct from old.status_sidi
+       or new.wilayah     is distinct from old.wilayah
+       or new.nama        is distinct from old.nama
+       or new.id_profiles is distinct from old.id_profiles then
+      raise exception 'Nama, wilayah, status baptis/sidi, dan tautan akun hanya dapat diubah oleh pengurus gereja';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_kunci_data_jemaat on jemaat;
+create trigger trg_kunci_data_jemaat
+  before update on jemaat
+  for each row execute function kunci_data_jemaat();
+
+
 -- ---------------------------------------------------------------------
 -- 3. ROW LEVEL SECURITY (sesuai Tabel 3 Matriks Hak Akses)
 -- ---------------------------------------------------------------------

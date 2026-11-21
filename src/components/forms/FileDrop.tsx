@@ -20,7 +20,7 @@ export interface FileDropProps {
 /**
  * Kotak unggah berkas: bisa diklik atau diseret (drag & drop).
  * Validasi tipe dan ukuran dilakukan di sini sebelum onFile dipanggil.
- * TODO [Backend]: unggah ke Supabase Storage di dalam onFile.
+ * Unggah ke Supabase Storage dilakukan di onFile memakai unggahBerkas() dari @/lib/data.
  */
 export const FileDrop: React.FC<FileDropProps> = ({ id, accept, allowedTypes, maxMB, icon, title, hint, typeError, onFile, onError }) => {
   const [over, setOver] = useState(false);

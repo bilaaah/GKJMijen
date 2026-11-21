@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon, Modal } from '@/components/common';
 import { useToast } from '@/components/feedback';
-import { useData, type Warta } from '@/lib/data';
+import { bukaBerkas, useData, type Warta } from '@/lib/data';
 import { NAMA_BULAN, formatHariTanggal, parseTanggal } from '@/utils/formatters';
 
 const polos = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -106,8 +106,8 @@ export const WartaSection: React.FC = () => {
             <div className="wp-body" dangerouslySetInnerHTML={{ __html: baca.isi }} />
             {baca.url_pdf && (
               <div className="modal-acts">
-                {/* TODO [Backend]: ganti dengan URL publik Supabase Storage */}
-                <button type="button" className="btn btn-primary" onClick={() => toast('Mengunduh warta versi PDF…', 'info')}>
+                {/* PDF warta ada di bucket publik Supabase Storage */}
+                <button type="button" className="btn btn-primary" onClick={() => bukaBerkas(baca.url_pdf) || toast('Berkas PDF warta belum tersedia.', 'info')}>
                   <Icon name="file-earmark-pdf" /> Unduh versi PDF
                 </button>
               </div>

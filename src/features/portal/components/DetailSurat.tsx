@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { Icon, LogoMark } from '@/components/common';
 import { EmptyState, useToast } from '@/components/feedback';
 import { ROUTES } from '@/lib/constants/routes';
-import type { Jemaat, PermohonanSurat } from '@/lib/data';
+import { bukaBerkas, type Jemaat, type PermohonanSurat } from '@/lib/data';
 import { formatHariTanggal, formatTanggalPendek, namaBerkas } from '@/utils/formatters';
 import { usePortalData } from '../usePortalData';
 import { STATUS_WARGA, tampilIsi, bacaKeterangan, layananDariSurat, namaLayanan } from '../layanan';
 import { StatusBadge, StatusSteps } from './StatusParts';
 import { GEREJA } from '@/features/landing/content';
+import { PENANDATANGAN } from '@/features/surat/kop-surat';
 
 const JUDUL: Record<PermohonanSurat['jenis_surat'], string> = { baptis: 'Surat Baptis', sidi: 'Surat Sidi', atestasi: 'Surat Atestasi' };
 
@@ -57,7 +58,7 @@ const SuratKertas: React.FC<{ s: PermohonanSurat; j: Jemaat }> = ({ s, j }) => (
       <span>Mijen, {formatHariTanggal(s.tanggal_pengajuan).split(', ')[1]}</span>
       <span>Atas nama Majelis GKJ Mijen</span>
       <span className="pt-paper-ttd">(tanda tangan)</span>
-      <b>Pendeta / Ketua Majelis</b>
+      <b>{PENANDATANGAN.nama}</b>
     </div>
   </div>
 );
@@ -112,10 +113,12 @@ export const DetailSurat: React.FC<{ id: string }> = ({ id }) => {
   }
 
   /**
-   * Mode frontend: surat dicetak dari pratinjau (pilih "Simpan sebagai PDF" di jendela cetak).
-   * TODO [Backend]: unduh berkas asli dari Supabase Storage (s.url_surat) dengan signed URL.
+   * Unduh surat final PDF yang diunggah pengurus (Supabase Storage, URL bertanda tangan).
+   * Jika pengurus belum mengunggah berkas, surat dicetak dari pratinjau
+   * (pilih "Simpan sebagai PDF" di jendela cetak).
    */
   const unduh = () => {
+    if (bukaBerkas(s.url_surat)) return;
     document.body.classList.add('cetak-surat');
     toast('Pilih "Simpan sebagai PDF" pada jendela cetak untuk menyimpan surat.', 'info');
     setTimeout(() => window.print(), 300);

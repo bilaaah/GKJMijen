@@ -13,6 +13,7 @@ const MENU = [
   { href: ROUTES.PORTAL.ROOT, label: 'Dashboard', icon: 'house' },
   { href: ROUTES.PORTAL.AJUKAN, label: 'Layanan Surat', icon: 'envelope-plus' },
   { href: ROUTES.PORTAL.STATUS, label: 'Status', icon: 'clipboard-check' },
+  { href: ROUTES.PORTAL.PROFIL, label: 'Profil', icon: 'person' },
 ];
 
 const isActive = (path: string, href: string) => (href === ROUTES.PORTAL.ROOT ? path === href : path.startsWith(href));
@@ -98,6 +99,9 @@ export const PortalShell: React.FC<{ children: React.ReactNode }> = ({ children 
                   <small>{user.email}</small>
                 </div>
                 <hr />
+                <Link href={ROUTES.PORTAL.PROFIL} role="menuitem">
+                  <Icon name="person" /> Profil saya
+                </Link>
                 <Link href={ROUTES.HOME} role="menuitem">
                   <Icon name="globe2" /> Beranda gereja
                 </Link>

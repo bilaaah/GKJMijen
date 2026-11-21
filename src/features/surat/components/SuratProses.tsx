@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Button, ButtonLink, Card, Icon, IconButton, Modal, PageHeader, Person, YesNoBadge } from '@/components/common';
 import { Field, FileDrop, FormInput, FormTextarea, RadioPills } from '@/components/forms';
 import { Alert, EmptyState, useToast } from '@/components/feedback';
-import { bukaBerkas, unggahBerkas, useData, JENIS_SURAT_KODE, JENIS_SURAT_LABEL, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type PermohonanSurat, type StatusSurat } from '@/lib/data';
+import { bukaBerkas, unggahBerkas, useData, JENIS_SURAT_LABEL, STATUS_SURAT, STATUS_SURAT_LABEL, STATUS_SURAT_TONE, type PermohonanSurat, type StatusSurat } from '@/lib/data';
 import { formatHariTanggal, formatTanggalPendek, namaBerkas } from '@/utils/formatters';
 import { ROUTES, routeJemaatDetail } from '@/lib/constants/routes';
+import { bacaKeterangan, namaLayanan, tampilIsi } from '@/features/portal/layanan';
+import { usulanNomor } from '../kop-surat';
+import { buatSuratPdf, namaBerkasSurat } from '../surat-pdf';
 
 const Timeline: React.FC<{ s: PermohonanSurat }> = ({ s }) => {
   const rejected = s.status === 'ditolak';
@@ -48,6 +51,9 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
   const [mengunggah, setMengunggah] = useState(false);
   const [errors, setErrors] = useState<{ nomor?: string; file?: string; catatan?: string }>({});
   const [preview, setPreview] = useState<'lampiran' | 'surat' | null>(null);
+  /** Draf surat otomatis yang sedang dipratinjau (belum diunggah). */
+  const [draf, setDraf] = useState<{ url: string; file: File; nomor: string } | null>(null);
+  const [membuat, setMembuat] = useState(false);
 
   if (!s)
     return (
@@ -64,6 +70,49 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
 
   const j = db.jemaat.find((x) => x.id === s.id_jemaat);
   const fileSurat = fileBaru || namaBerkas(s.url_surat);
+  const nomorUsulan = usulanNomor(db.surat.filter((x) => x.id !== s.id));
+
+  /** Buat PDF surat resmi dari template (kop, Times 12 pt, rata kanan-kiri) lalu tampilkan pratinjaunya. */
+  const buatOtomatis = async () => {
+    if (!j) return;
+    const no = nomor.trim() || nomorUsulan;
+    setNomor(no);
+    setErrors((e) => ({ ...e, nomor: undefined, file: undefined }));
+    setMembuat(true);
+    try {
+      const isi = await buatSuratPdf({ s, j, nomor: no, tanggal: new Date() });
+      const file = new File([isi], namaBerkasSurat(s, j), { type: 'application/pdf' });
+      setDraf({ url: URL.createObjectURL(file), file, nomor: no });
+    } catch (e) {
+      toast(`Surat gagal dibuat: ${e instanceof Error ? e.message : String(e)}`, 'bad');
+    } finally {
+      setMembuat(false);
+    }
+  };
+
+  /** Pakai draf: unggah ke bucket "surat" (folder akun warga) lalu siapkan status Selesai. */
+  const pakaiDraf = async () => {
+    if (!draf) return;
+    setMengunggah(true);
+    const res = await unggahBerkas(draf.file, 'surat', j?.id_profiles ?? undefined);
+    setMengunggah(false);
+    if (!res.ok) {
+      toast(res.message, 'bad');
+      return;
+    }
+    setUrlBaru(res.url);
+    setFileBaru(draf.file.name);
+    setNomor(draf.nomor);
+    setStatus('selesai');
+    URL.revokeObjectURL(draf.url);
+    setDraf(null);
+    toast('Surat siap. Klik "Simpan Perubahan" untuk menerbitkannya ke warga.');
+  };
+
+  const tutupDraf = () => {
+    if (draf) URL.revokeObjectURL(draf.url);
+    setDraf(null);
+  };
 
   const simpan = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,6 +189,21 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
               <p className="muted">Data jemaat pemohon tidak ditemukan.</p>
             )}
           </Card>
+          {/* Isian formulir yang dikirim warga dari portal (kolom permohonan_surat.keterangan) */}
+          <Card title="Isian Formulir Pemohon" aside={<span className="muted">{namaLayanan(s)}</span>}>
+            {bacaKeterangan(s).length ? (
+              <dl className="dl">
+                {bacaKeterangan(s).map((b) => (
+                  <div key={b.label}>
+                    <dt>{b.label}</dt>
+                    <dd>{tampilIsi(b.isi)}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p className="muted">Tidak ada isian tambahan dari pemohon.</p>
+            )}
+          </Card>
           <Card title="Lampiran Permohonan">
             <div className="file-row">
               <span className="fi">
@@ -193,13 +257,18 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
               id="nomor_surat"
               label="Nomor Surat"
               className="num"
-              placeholder={`contoh: 015/GKJ-MJN/${JENIS_SURAT_KODE[s.jenis_surat]}/XI/2026`}
-              helperText="Wajib diisi sebelum status Selesai."
+              placeholder={`usulan: ${nomorUsulan}`}
+              helperText="Format gereja: urut/GKJ-MJ/bulan romawi/tahun. Terisi otomatis saat membuat surat."
               value={nomor}
               onChange={(e) => setNomor(e.target.value)}
               error={errors.nomor}
             />
-            <Field label="Unggah Surat Final (PDF)" error={errors.file}>
+            <Field label="Surat Resmi Otomatis" helperText="Kop gereja, Times New Roman 12 pt, rata kanan-kiri, diisi dari data jemaat dan formulir pemohon.">
+              <Button type="button" variant="outline" icon="file-earmark-text" block disabled={!j || membuat || mengunggah} onClick={buatOtomatis}>
+                {membuat ? 'Menyusun surat…' : 'Buat Surat Otomatis'}
+              </Button>
+            </Field>
+            <Field label="Atau Unggah Surat Final (PDF)" error={errors.file}>
               {fileSurat && (
                 <div className="file-row" style={{ marginBottom: 8 }}>
                   <span className="fi ok">
@@ -252,6 +321,36 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
       </div>
 
       <Modal
+        isOpen={!!draf}
+        onClose={tutupDraf}
+        size="lg"
+        title="Pratinjau Surat Otomatis"
+        subtitle={draf ? `${draf.file.name} · Nomor ${draf.nomor}` : ''}
+        footer={
+          <>
+            <Button variant="outline" onClick={tutupDraf}>
+              Batal
+            </Button>
+            <Button variant="outline" icon="box-arrow-up-right" onClick={() => draf && bukaBerkas(draf.url)}>
+              Buka di tab baru
+            </Button>
+            <Button icon="check-lg" disabled={mengunggah} onClick={pakaiDraf}>
+              {mengunggah ? 'Mengunggah…' : 'Gunakan Surat Ini'}
+            </Button>
+          </>
+        }
+      >
+        {draf && (
+          <>
+            <iframe src={draf.url} title="Pratinjau surat" style={{ width: '100%', height: '70vh', border: '1px solid var(--line, #e5ddd3)', borderRadius: 8 }} />
+            <p className="muted" style={{ fontSize: 13, margin: '8px 0 0' }}>
+              Pratinjau tidak tampil (misalnya di ponsel)? Klik <b>Buka di tab baru</b> untuk melihat suratnya.
+            </p>
+          </>
+        )}
+      </Modal>
+
+      <Modal
         isOpen={!!preview}
         onClose={() => setPreview(null)}
         size="lg"
@@ -292,7 +391,7 @@ export const SuratProses: React.FC<{ id: string }> = ({ id }) => {
               <br />
               <br />
               <br />
-              {preview === 'surat' ? 'Pdt. Daniel Kurniawan' : j?.nama}
+              {preview === 'surat' ? 'Pdt. Denny Irawan, S.Si-Teol' : j?.nama}
             </div>
           </div>
         </div>

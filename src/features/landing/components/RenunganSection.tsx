@@ -95,7 +95,10 @@ export const RenunganSection: React.FC = () => {
         if (awalX.current === null) return;
         const dx = e.clientX - awalX.current;
         awalX.current = null;
-        if (Math.abs(dx) > 50) (dx < 0 ? ke(i + 1, 1) : ke(i - 1, -1));
+        if (Math.abs(dx) > 50) {
+          if (dx < 0) ke(i + 1, 1);
+          else ke(i - 1, -1);
+        }
       }}
       onKeyDown={(e) => {
         if (e.key === 'ArrowRight') ke(i + 1, 1);

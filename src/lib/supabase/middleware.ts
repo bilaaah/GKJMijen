@@ -41,10 +41,11 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh auth session
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Segarkan sesi & verifikasi token. getClaims() memverifikasi JWT secara lokal bila project memakai
+  // signing key asimetris (tanpa panggilan ke server Auth di setiap pindah halaman), dan otomatis
+  // jatuh ke pemeriksaan server bila belum. Lebih cepat daripada getUser() di setiap request.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims?.sub ? data.claims : null;
 
   const path = request.nextUrl.pathname;
   const isPublik = path === '/' || HALAMAN_PUBLIK.some((p) => path.startsWith(p));

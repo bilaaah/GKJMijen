@@ -9,6 +9,7 @@ Semua akses data memakai **token pengguna yang login**, sehingga **Row Level Sec
 |---|---|
 | Project Supabase **baru** | `supabase/schema.sql`, lalu (opsional) `supabase/seed.sql` untuk data contoh |
 | Database yang sudah dibuat sebelum 20 Nov 2026 | `supabase/patch-01-poster-pdf-hapus-akun.sql` (aman diulang) |
+| Database yang sudah dibuat sebelum 21 Nov 2026 | `supabase/patch-02-kunci-data-jemaat.sql` (aman diulang) |
 
 Lalu jadikan akun pertama sebagai pengurus:
 
@@ -79,9 +80,17 @@ Panel admin (`/dashboard`, dst.) hanya bisa dibuka **pengurus**; warga yang menc
 
 Bucket privat: database menyimpan **path** berkas; tampilan memakai URL bertanda tangan (berlaku 6 jam).
 
-## 6. Belum dikerjakan
+## 6. Fitur tambahan (21 Nov 2026)
 
-- Halaman untuk **warga** (mengajukan surat, unggah lampiran, unduh surat). Database & RLS-nya sudah siap.
-- Landing page publik (jadwal & warta terbit). Bisa membaca tabel `kegiatan` dan `warta` (status `terbit`) tanpa login.
+- **Ekspor rekap** (Laporan & Rekap): `src/features/keuangan/ekspor.ts` – PDF A4 (jsPDF) & Excel 3 sheet berumus (exceljs).
+- **Surat resmi otomatis** (admin → Proses Surat → *Buat Surat Otomatis*): `src/features/surat/surat-pdf.ts`.
+  Kop, penanda tangan, dan format nomor diatur di `src/features/surat/kop-surat.ts`.
+- **Profil Saya warga** (`/portal/profil`, UC05): ubah nama akun, no HP, alamat, data keluarga.
+- **Pengaman data jemaat** (`kunci_data_jemaat`): warga tidak bisa mengubah nama resmi, wilayah,
+  status baptis/sidi, atau tautan akun miliknya; hanya pengurus.
+- Middleware memakai `getClaims()` (verifikasi token lokal) supaya pindah halaman lebih cepat.
+
+## 7. Belum dikerjakan
+
 - `features/*/actions.ts` masih placeholder dan tidak dipakai; seluruh data saat ini lewat `src/lib/data`.
-- Ekspor rekap ke PDF / Excel.
+- Konten landing page di `features/landing/content.ts` (ibadah rutin, renungan, siaran, kontak) belum bisa diubah dari admin.

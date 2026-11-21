@@ -29,6 +29,7 @@ export const ROUTES = {
     ROOT: '/portal',
     AJUKAN: '/portal/ajukan',
     STATUS: '/portal/status',
+    PROFIL: '/portal/profil',
   },
 } as const;
 

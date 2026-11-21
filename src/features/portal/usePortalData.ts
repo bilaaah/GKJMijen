@@ -4,10 +4,8 @@
  * Data milik warga yang sedang login: profil, data jemaat tertaut, dan permohonan suratnya.
  * Sesuai aturan hak akses (Tabel 3): warga hanya melihat data miliknya sendiri.
  *
- * TODO [Backend]: ganti isi hook ini dengan query Supabase
- *   - jemaat  : select * from jemaat where id_profiles = auth.uid()
- *   - surat   : select * from permohonan_surat where id_jemaat = <id jemaat di atas>
- *   RLS di PostgreSQL tetap menjadi penjaga utama.
+ * Sumber data: SupabaseDataProvider memuat data warga (jemaat where id_profiles = auth.uid(),
+ * permohonan_surat miliknya). RLS di PostgreSQL tetap menjadi penjaga utama.
  */
 import { useMemo } from 'react';
 import { useData } from '@/lib/data';

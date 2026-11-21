@@ -31,6 +31,7 @@ type PermohonanRow = Rata<{
   status: 'diajukan' | 'diproses' | 'selesai' | 'ditolak';
   catatan: string | null;
   nomor_surat: string | null;
+  keterangan: string | null;
   url_lampiran: string | null;
   url_surat: string | null;
 } & Waktu>;

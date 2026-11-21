@@ -9,7 +9,6 @@ import { Field, FileDrop } from '@/components/forms';
 import { newId, unggahBerkas } from '@/lib/data';
 import { ROUTES, routePortalSurat } from '@/lib/constants/routes';
 import { hariIniISO, namaBerkas } from '@/utils/formatters';
-import { sanitizeFileName } from '@/utils/storage';
 import { usePortalData } from '../usePortalData';
 import { LAYANAN, tampilIsi, alasanTidakBisa, bacaKeterangan, layananById, namaLayanan, susunKeterangan, type Layanan, type LayananId } from '../layanan';
 
@@ -23,8 +22,8 @@ const ukuran = (b: number) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)
  * Langkah: 1) pilih layanan → 2) isi data + lampiran → 3) periksa lalu kirim.
  * ?layanan=<id> memilih layanan otomatis, ?ulang=<id surat> mengisi ulang dari permohonan yang ditolak.
  *
- * TODO [Backend]: ganti setDb(...) di kirim() dengan Server Action ajukanSurat()
- * yang mengunggah lampiran ke Supabase Storage lalu insert ke permohonan_surat.
+ * Backend: lampiran diunggah ke bucket "lampiran" (folder = id akun warga), lalu setDb(...)
+ * meng-insert baris permohonan_surat. RLS hanya mengizinkan status 'diajukan' milik sendiri.
  */
 export const AjukanSurat: React.FC = () => {
   const { user, jemaat, surat, setDb } = usePortalData();
