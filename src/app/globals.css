@@ -150,6 +150,27 @@ textarea.input { resize: vertical; min-height: 96px; }
 .poster-prev .pp-tx b { font-weight: 500; overflow-wrap: anywhere; }
 .poster-view { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: 12px; border: 1px solid var(--beige); }
 
+/* ---------- editor petugas kegiatan ---------- */
+.petugas { display: grid; gap: 10px; }
+.petugas-template { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; border: 1.5px dashed var(--terra); border-radius: 14px; background: #fbf1ec; color: var(--espresso); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.petugas-template:hover { background: var(--rose); border-color: var(--maroon); }
+.petugas-template .ic-circle { width: 38px; height: 38px; background: var(--white); }
+.petugas-template b { display: block; font-weight: 500; color: var(--maroon); }
+.petugas-template small { display: block; color: var(--muted); font-size: 12.5px; }
+.petugas-list { display: grid; gap: 8px; }
+.petugas-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.petugas-row.tambahan { grid-template-columns: 170px minmax(0, 1fr) auto; }
+.petugas-label { font-size: 14px; font-weight: 500; color: var(--espresso); margin: 0; }
+.petugas-label::after { content: ':'; color: var(--muted); }
+.petugas-add { justify-self: start; }
+@media (max-width: 560px) {
+  .petugas-row, .petugas-row.tambahan { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 8px; }
+  .petugas-row .petugas-label { grid-column: 1 / -1; }
+  .petugas-row.tambahan .petugas-peran { grid-column: 1 / -1; }
+  .petugas-row.tambahan .icon-btn { grid-column: 2; grid-row: 2; }
+  .petugas-row.tambahan { padding: 10px; border: 1px dashed var(--beige); border-radius: 12px; background: var(--cream); }
+}
+
 /* ---------- card, badge ---------- */
 .gk-card { background: var(--white); border: 1px solid var(--beige); border-radius: var(--r-card); box-shadow: var(--shadow); padding: 22px; min-width: 0; }
 .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }

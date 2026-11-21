@@ -3,11 +3,12 @@
 import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, PageHeader } from '@/components/common';
-import { Field, FileDrop, FormInput, FormTextarea } from '@/components/forms';
+import { Field, FileDrop, FormInput } from '@/components/forms';
 import { EmptyState, useConfirm, useToast } from '@/components/feedback';
 import { newId, unggahBerkas, useData } from '@/lib/data';
 import { formatTanggalPendek } from '@/utils/formatters';
 import { ROUTES } from '@/lib/constants/routes';
+import { PetugasEditor } from './PetugasEditor';
 
 type Errors = Partial<Record<'nama_kegiatan' | 'tanggal' | 'jam' | 'lokasi' | 'poster', string>>;
 
@@ -40,6 +41,7 @@ export const KegiatanForm: React.FC<{ id?: string }> = ({ id }) => {
     setPosterNama(file.name);
   };
   const lokasiList = useMemo(() => Array.from(new Set(db.kegiatan.map((k) => k.lokasi))), [db.kegiatan]);
+  const saranNama = useMemo(() => Array.from(new Set(db.jemaat.map((j) => j.nama))).sort((a, b) => a.localeCompare(b)), [db.jemaat]);
 
   if (id && !existing) return <EmptyState title="Kegiatan tidak ditemukan" description="Kegiatan mungkin sudah dihapus." />;
 
@@ -97,16 +99,9 @@ export const KegiatanForm: React.FC<{ id?: string }> = ({ id }) => {
                 <option key={l} value={l} />
               ))}
             </datalist>
-            <FormTextarea
-              id="petugas"
-              label="Petugas"
-              fieldClassName="full"
-              rows={5}
-              placeholder={'Pengkhotbah: Pdt. Daniel Kurniawan\nLiturgos: Agus Widodo\nPemusik: Yosua Adi Nugroho'}
-              helperText="Satu petugas per baris dengan format Peran: Nama."
-              value={f.petugas}
-              onChange={(e) => set('petugas', e.target.value)}
-            />
+            <Field label="Petugas" className="full" helperText="Kolom yang dibiarkan kosong tidak ikut disimpan.">
+              <PetugasEditor value={f.petugas} onChange={(v) => set('petugas', v)} saranNama={saranNama} />
+            </Field>
             <Field
               label={
                 <>
