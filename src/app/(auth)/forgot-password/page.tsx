@@ -72,8 +72,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <>
-      <Link href={ROUTES.AUTH.LOGIN} className="link d-inline-flex align-items-center gap-2 mb-3">
-        <Icon name="arrow-left" /> Kembali
+      <Link href={ROUTES.AUTH.LOGIN} className="auth-back">
+        <Icon name="arrow-left" /> Kembali ke Masuk
       </Link>
       <div className="eyebrow">Lupa kata sandi</div>
       <h1>Atur Ulang Kata Sandi</h1>

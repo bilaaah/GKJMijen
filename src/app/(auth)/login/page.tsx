@@ -46,6 +46,9 @@ export default function LoginPage() {
 
   return (
     <>
+      <Link href={ROUTES.HOME} className="auth-back">
+        <Icon name="arrow-left" /> Kembali ke Beranda
+      </Link>
       <LogoMark tone="maroon" size="xl" />
       <div className="eyebrow">Selamat datang kembali</div>
       <h1>Masuk ke Akun Anda</h1>

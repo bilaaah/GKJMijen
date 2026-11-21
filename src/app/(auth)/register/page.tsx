@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, LogoMark } from '@/components/common';
+import { Button, Icon, LogoMark } from '@/components/common';
 import { FormInput, PasswordInput } from '@/components/forms';
 import { Alert, useToast } from '@/components/feedback';
 import { useData } from '@/lib/data';
@@ -46,6 +46,9 @@ export default function RegisterPage() {
 
   return (
     <>
+      <Link href={ROUTES.HOME} className="auth-back">
+        <Icon name="arrow-left" /> Kembali ke Beranda
+      </Link>
       <LogoMark tone="maroon" size="xl" />
       <div className="eyebrow">Pendaftaran akun</div>
       <h1>Buat Akun Baru</h1>
