@@ -25,6 +25,7 @@ import {
   transaksiDariDb,
   wartaDariDb,
 } from './mapping';
+import { SEED } from './demo-seed';
 import { tandatanganiBerkas } from './files';
 import { simpanPerbedaan } from './sync';
 import type { DB, Profile } from './types';
@@ -40,10 +41,15 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
   /** Klien tanpa tipe untuk operasi generik lintas tabel (nama tabel ditentukan saat runtime). */
   const sbUmum = sb as unknown as SupabaseClient;
   const toast = useToast();
-  const [db, setDbState] = useState<DB>(DB_KOSONG);
+  // Mulai dengan data publik agar halaman landing page tidak kosong saat proses muat
+  const [db, setDbState] = useState<DB>(() => ({
+    ...DB_KOSONG,
+    kegiatan: SEED.kegiatan,
+    warta: SEED.warta.filter((w) => w.status === 'terbit'),
+  }));
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const dbRef = useRef<DB>(DB_KOSONG);
+  const dbRef = useRef<DB>(db);
   const antrean = useRef<Promise<void>>(Promise.resolve());
 
   const pasangDb = useCallback((next: DB) => {
@@ -53,56 +59,80 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
 
   /** Baca seluruh data yang boleh dilihat pengguna ini. */
   const muat = useCallback(async (): Promise<Profile | null> => {
-    const {
-      data: { user: authUser },
-    } = await sb.auth.getUser();
+    // 1. Data publik: kegiatan & warta terbit SELALU dimuat untuk semua orang
+    const [kegiatanRes, wartaRes] = await Promise.all([
+      sb.from('kegiatan').select('*').order('tanggal'),
+      sb.from('warta').select('*').eq('status', 'terbit').order('created_at', { ascending: false }),
+    ]);
+
+    const publicKegiatan = (kegiatanRes.data && kegiatanRes.data.length > 0)
+      ? kegiatanRes.data.map(kegiatanDariDb)
+      : SEED.kegiatan;
+
+    const publicWarta = (wartaRes.data && wartaRes.data.length > 0)
+      ? wartaRes.data.map(wartaDariDb)
+      : SEED.warta.filter((w) => w.status === 'terbit');
+
+    // 2. Cek apakah ada pengguna yang sedang login
+    let authUser = null;
+    try {
+      const { data } = await sb.auth.getUser();
+      authUser = data?.user ?? null;
+    } catch {
+      authUser = null;
+    }
+
     if (!authUser) {
-      // Pengunjung publik (belum login) dapat melihat jadwal kegiatan dan warta terbit
-      const [kegiatan, warta] = await Promise.all([
-        sb.from('kegiatan').select('*').order('tanggal'),
-        sb.from('warta').select('*').eq('status', 'terbit').order('created_at', { ascending: false }),
-      ]);
-      const baru: DB = {
+      // Pengunjung publik (belum login): tampilkan kegiatan & warta publik
+      pasangDb({
         ...DB_KOSONG,
-        kegiatan: (kegiatan.data ?? []).map(kegiatanDariDb),
-        warta: (warta.data ?? []).map(wartaDariDb),
-      };
-      pasangDb(baru);
+        kegiatan: publicKegiatan,
+        warta: publicWarta,
+      });
       setUserId(null);
       return null;
     }
 
-    const { data: me, error: errProfil } = await sb.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
-    if (errProfil) throw errProfil;
-    const profil = me ? profileDariDb(me) : null;
+    let profil: Profile | null = null;
+    try {
+      const { data: me } = await sb.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+      profil = me ? profileDariDb(me) : null;
+    } catch {
+      profil = null;
+    }
+
     if (!profil) {
-      pasangDb(DB_KOSONG);
+      // Akun auth ada tapi belum terdaftar di profiles: tetap tampilkan data publik
+      pasangDb({
+        ...DB_KOSONG,
+        kegiatan: publicKegiatan,
+        warta: publicWarta,
+      });
       setUserId(null);
       return null;
     }
 
     if (profil.peran === 'warga') {
       // Warga jemaat: profil pribadi, data jemaat tertaut, permohonan surat miliknya, kegiatan & warta terbit
-      const [jemaat, surat, kegiatan, warta] = await Promise.all([
+      const [jemaat, surat] = await Promise.all([
         sb.from('jemaat').select('*').eq('id_profiles', authUser.id).order('nama'),
         sb.from('permohonan_surat').select('*').order('tanggal_pengajuan', { ascending: false }),
-        sb.from('kegiatan').select('*').order('tanggal'),
-        sb.from('warta').select('*').eq('status', 'terbit').order('created_at', { ascending: false }),
       ]);
       const baru: DB = {
         profiles: [profil],
         jemaat: (jemaat.data ?? []).map(jemaatDariDb),
         surat: (surat.data ?? []).map(suratDariDb),
         transaksi: [],
-        kegiatan: (kegiatan.data ?? []).map(kegiatanDariDb),
-        warta: (warta.data ?? []).map(wartaDariDb),
+        kegiatan: publicKegiatan,
+        warta: publicWarta,
       };
       pasangDb(await tandatanganiBerkas(baru));
       setUserId(profil.id);
       return profil;
     }
 
-    const [profiles, jemaat, surat, transaksi, kegiatan, warta] = await Promise.all([
+    // Pengurus: muat seluruh tabel
+    const [profiles, jemaat, surat, transaksi, kegiatanPengurus, wartaPengurus] = await Promise.all([
       sb.from('profiles').select('*').order('created_at'),
       sb.from('jemaat').select('*').order('nama'),
       sb.from('permohonan_surat').select('*').order('tanggal_pengajuan', { ascending: false }),
@@ -110,7 +140,7 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
       sb.from('kegiatan').select('*').order('tanggal'),
       sb.from('warta').select('*').order('created_at', { ascending: false }),
     ]);
-    const gagal = [profiles, jemaat, surat, transaksi, kegiatan, warta].find((r) => r.error);
+    const gagal = [profiles, jemaat, surat, transaksi, kegiatanPengurus, wartaPengurus].find((r) => r.error);
     if (gagal?.error) toast(`Gagal memuat data: ${gagal.error.message}`, 'bad');
 
     const baru: DB = {
@@ -118,8 +148,12 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
       jemaat: (jemaat.data ?? []).map(jemaatDariDb),
       surat: (surat.data ?? []).map(suratDariDb),
       transaksi: (transaksi.data ?? []).map(transaksiDariDb),
-      kegiatan: (kegiatan.data ?? []).map(kegiatanDariDb),
-      warta: (warta.data ?? []).map(wartaDariDb),
+      kegiatan: (kegiatanPengurus.data && kegiatanPengurus.data.length > 0)
+        ? kegiatanPengurus.data.map(kegiatanDariDb)
+        : publicKegiatan,
+      warta: (wartaPengurus.data && wartaPengurus.data.length > 0)
+        ? wartaPengurus.data.map(wartaDariDb)
+        : publicWarta,
     };
     pasangDb(await tandatanganiBerkas(baru));
     setUserId(profil.id);
@@ -133,15 +167,17 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
       .finally(() => aktif && setReady(true));
     const { data: sub } = sb.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
-        pasangDb(DB_KOSONG);
         setUserId(null);
+        muat().catch(() => {});
+      } else if (event === 'SIGNED_IN') {
+        muat().catch(() => {});
       }
     });
     return () => {
       aktif = false;
       sub.subscription.unsubscribe();
     };
-  }, [muat, sb, pasangDb, toast]);
+  }, [muat, sb, toast]);
 
   const simpanPerubahan = useCallback((lama: DB, baru: DB) => simpanPerbedaan(sbUmum, lama, baru), [sbUmum]);
 
@@ -189,9 +225,9 @@ export function SupabaseDataProvider({ children }: { children: React.ReactNode }
 
   const logout = useCallback(async () => {
     await sb.auth.signOut();
-    pasangDb(DB_KOSONG);
     setUserId(null);
-  }, [sb, pasangDb]);
+    await muat();
+  }, [sb, muat]);
 
   const register = useCallback(
     async ({ nama, email, password }: { nama: string; email: string; password: string }): Promise<RegisterResult> => {

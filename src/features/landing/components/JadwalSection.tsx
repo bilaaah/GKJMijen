@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Icon, Modal } from '@/components/common';
 import { useData, type Kegiatan } from '@/lib/data';
 import { useNow } from '@/hooks/useInView';
-import { NAMA_HARI, formatHariTanggal, formatJam } from '@/utils/formatters';
+import { NAMA_HARI, formatHariTanggal, formatJam, parseTanggal } from '@/utils/formatters';
 import { IBADAH_RUTIN } from '../content';
 
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -24,11 +24,32 @@ export const JadwalSection: React.FC = () => {
   const [buka, setBuka] = useState<string | null>(null);
   const [poster, setPoster] = useState<Kegiatan | null>(null);
 
-  // 7 hari mulai hari ini
+  // 7 hari mulai hari ini (atau ditambatkan ke jadwal terdekat jika data di luar 7 hari saat ini)
   const hari = useMemo(() => {
     if (!now) return [];
+    const tglSekarang = iso(now);
+    const adaDalam7Hari = db.kegiatan.some((k) => {
+      const diffHari = (parseTanggal(k.tanggal).getTime() - parseTanggal(tglSekarang).getTime()) / (1000 * 3600 * 24);
+      return diffHari >= 0 && diffHari < 7;
+    });
+
+    let tanggalMulai = new Date(now);
+    if (!adaDalam7Hari && db.kegiatan.length > 0) {
+      const mendatang = db.kegiatan
+        .filter((k) => k.tanggal >= tglSekarang)
+        .sort((a, b) => a.tanggal.localeCompare(b.tanggal))[0];
+      if (mendatang) {
+        tanggalMulai = parseTanggal(mendatang.tanggal);
+      } else {
+        const terbaru = [...db.kegiatan].sort((a, b) => b.tanggal.localeCompare(a.tanggal))[0];
+        if (terbaru) {
+          tanggalMulai = parseTanggal(terbaru.tanggal);
+        }
+      }
+    }
+
     return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(now);
+      const d = new Date(tanggalMulai);
       d.setDate(d.getDate() + i);
       const tgl = iso(d);
       return { tgl, d, isi: db.kegiatan.filter((k) => k.tanggal === tgl).sort((a, b) => a.jam.localeCompare(b.jam)) };
