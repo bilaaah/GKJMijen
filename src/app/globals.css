@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap');
+
 /* =============================================================================
    Tema GKJ Mijen
    Palet diambil dari landing page referensi (maroon, burgundy, krem).
@@ -25,8 +27,8 @@
   --bad: #a3271f; --bad-tx: #a3271f; --bad-bg: #f4ded8;
   --neu: #7a6a64; --neu-bg: #efe7df;
   --on-dark: #faf5ef;
-  --serif: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
-  --sans: var(--font-sans), 'Jost', 'Segoe UI', system-ui, sans-serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Jost', 'Segoe UI', system-ui, sans-serif;
   --r-card: 16px;
   --r-in: 10px;
   --shadow: 0 1px 2px rgba(41, 26, 23, 0.04), 0 10px 28px -16px rgba(41, 26, 23, 0.18);
